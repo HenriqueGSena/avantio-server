@@ -2,7 +2,7 @@
   <a href="http://nestjs.com/" target="blank"><img src="./assets/logo/logo.png" width="400" alt="Nest Logo" /></a>
 </p>
 
-  <p align="center">Pineapples Server API 🍍</p>
+  <h1 align="center">Pineapples Server API 🍍</h1>
 
 ## Description
 

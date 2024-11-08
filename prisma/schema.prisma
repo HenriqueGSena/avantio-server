@@ -9,7 +9,45 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("POSTGRES_URL")
+  provider     = "postgresql"
+  url          = env("POSTGRES_URL_DEV")
   relationMode = "prisma"
+}
+
+model bookings {
+  id                 String   @id @unique
+  localizer          String
+  status             String
+  booking_date       String
+  company_id         String?
+  accommodation_code String
+  arrival            DateTime
+  departure          DateTime
+  external_data      String[]
+  creation_date      DateTime @default(now())
+  updated_at         DateTime
+}
+
+model users {
+  id            String   @id @unique
+  name          String
+  surnames      String
+  email         String
+  phone         String
+  creation_date DateTime
+  last_updated  DateTime
+  country       String
+  postal_code   String
+  phones        String[]
+  language      String
+}
+
+model accommodations {
+  id      String @id @unique
+  name    String
+  type    String
+  status  String
+  units   String
+  subType String
+  purpose String
 }

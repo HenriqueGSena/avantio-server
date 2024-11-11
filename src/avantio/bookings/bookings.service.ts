@@ -23,6 +23,9 @@ export class BookingsService implements OnModuleInit {
                     booking.status === BookingStatus.PAID,
             );
             return filteredBookings.map((booking) => booking.id);
+            /**
+             * Alem de retornar o id precisa ser retornada a data do checkout junto do dia atual(Hoje)
+             */
         } catch (er) {
             console.error('Erro ao retorna lista de ids das reservas', er);
         }

@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { BookingStatus } from '../enum/bookingStatus';
+import { BookingStatus } from '../enums/bookingStatus';
 
 @Injectable()
 export class BookingsService {

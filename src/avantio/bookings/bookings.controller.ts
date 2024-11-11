@@ -1,13 +1,14 @@
-import { Controller, Get, Inject } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
+import { BookingsService } from '../bookings/bookings.service';
 
 @Controller('bookings')
 export class BookingsController {
 
-    constructor(@Inject('API_SERVICE') private readonly apiService) { }
+    constructor(private readonly bookingService: BookingsService) { }
     
     @Get()
-    async getAllBookings() { 
-        const response = await this.apiService.get('/bookings');
-        return response.data;
+    async getAllBookings() {
+        const confirmedBookings = await this.bookingService.getConfirmedBookings();
+        return confirmedBookings;
     }
 }

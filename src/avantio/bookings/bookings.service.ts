@@ -1,10 +1,15 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, OnModuleInit } from '@nestjs/common';
 import { BookingStatus } from '../enums/bookingStatus';
 
 @Injectable()
-export class BookingsService {
+export class BookingsService implements OnModuleInit {
 
     constructor(@Inject('API_SERVICE') private readonly apiService) { }
+
+    async onModuleInit() {
+        const bookingIds = await this.getConfirmedBookings();
+        console.log('Ids das reservas confirmadas:', bookingIds);
+    }
 
     async getConfirmedBookings(): Promise<string[]> {
         try {
@@ -17,8 +22,7 @@ export class BookingsService {
                     booking.status === BookingStatus.UNPAID ||
                     booking.status === BookingStatus.PAID,
             );
-            const bookingIds = filteredBookings.map((booking) => booking.id);
-            return bookingIds;
+            return filteredBookings.map((booking) => booking.id);
         } catch (er) {
             console.error('Erro ao retorna lista de ids das reservas', er);
         }

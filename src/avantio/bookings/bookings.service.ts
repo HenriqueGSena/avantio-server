@@ -12,7 +12,7 @@ export class BookingsService implements OnModuleInit {
         // console.log('Ids das reservas confirmadas:', this.confirmedBookingIds);
 
         const bookingDetails = await this.getBookingsDetailsId();
-        // console.log('Detalhes das reservas confirmadas:', bookingDetails);
+        console.log('Detalhes das reservas confirmadas:', bookingDetails);
     }
 
     @Cron('0 */15 * * * *')
@@ -60,7 +60,8 @@ export class BookingsService implements OnModuleInit {
         }
     }
 
-    async getBookingsDetailsId(): Promise<{ id: string; departure: string; statusService: string | null }[]> {
+    async getBookingsDetailsId(): Promise<{ id: string; statusService: string | null; serviceDate: string }[]> {
+        // departure: string;
         try {
             const detailsBooking = await Promise.all(
                 this.confirmedBookingIds.map(async (booking) => {
@@ -69,8 +70,13 @@ export class BookingsService implements OnModuleInit {
 
                     return {
                         id: bookingData.id,
-                        departure: bookingData.stayDates.departure,
+                        // departure: bookingData.stayDates.departure,
+                        serviceDate: bookingData.extras?.[0]?.applicationDate
+                            ? new Date(bookingData.extras[0].applicationDate).toISOString().split('T')[0] : null,
                         statusService: bookingData.extras.length > 0 ? bookingData.extras[0].info.category.code : null,
+                        /** TODO:
+                         * Para que o statusService seja exibido ele deverá somente com seu status = "CLEANING";
+                         */
                     };
                 })
             );

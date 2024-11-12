@@ -13,7 +13,6 @@ export class BookingsService implements OnModuleInit {
     async getConfirmedBookings(): Promise<{ id: string; departure: string }[]> {
         try {
             const today = new Date().toISOString().split('T')[0];
-            console.log('Retornando a data atual:', today);
 
             const response = await this.apiService.get('/bookings', {
                 params: {

@@ -60,8 +60,10 @@ export class BookingsService implements OnModuleInit {
             return [];
         }
     }
-    
-    async getBookingsDetailsId(): Promise<{ id: string; statusService: string | null; serviceDate: string | null; referenceService: string }[]> {
+
+    async getBookingsDetailsId(): Promise<{ id: string; statusService: string | null; serviceDate: string | null; referenceService: string  }[]> {
+        const today = new Date().toISOString().split('T')[0];
+
         try {
             const detailsBooking = await Promise.all(
                 this.confirmedBookingIds.map(async (booking) => {
@@ -70,14 +72,15 @@ export class BookingsService implements OnModuleInit {
 
                     const extra = bookingData.extras?.find(
                         (extraItem: any) =>
-                            extraItem.info?.category?.code === ExtrasCategory.CLEANING ||
-                            extraItem.info?.reference === ExtrasCategory.CLEANING_REFERENCE
+                            (extraItem.info?.category?.code === ExtrasCategory.CLEANING ||
+                                extraItem.info?.reference === ExtrasCategory.CLEANING_REFERENCE) &&
+                            new Date(extraItem.applicationDate).toISOString().split('T')[0] === today
                     );
 
                     if (extra) {
                         return {
                             id: bookingData.id,
-                            serviceDate: extra.applicationDate ? new Date(extra.applicationDate).toISOString().split('T')[0]: null,
+                            serviceDate: new Date(extra.applicationDate).toISOString().split('T')[0],
                             statusService: extra.info.category?.code || null,
                             referenceService: extra.info.reference,
                         };
@@ -86,9 +89,7 @@ export class BookingsService implements OnModuleInit {
                     return null;
                 })
             );
-
-            return detailsBooking.filter((item) => item !== null) as { id: string; statusService: string | null; serviceDate: string | null; referenceService: string }[];
-
+            return detailsBooking.filter((item) => item !== null) as { id: string; statusService: string | null; serviceDate: string | null; referenceService: string  }[];
         } catch (error) {
             console.error('Erro ao buscar detalhes das reservas por ID:', error);
             return [];

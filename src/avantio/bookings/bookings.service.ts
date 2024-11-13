@@ -61,7 +61,17 @@ export class BookingsService implements OnModuleInit {
         }
     }
 
-    async getBookingsDetailsId(): Promise<{ id: string; statusService: string | null; serviceDate: string | null; referenceService: string; accommodationCode: string | null }[]> {
+    private async getAccommodationCode(accommodationId:string): Promise<string | null> {
+        try {
+            const accommodationResponse = await this.apiService.get(`/accommodations/${accommodationId}`);
+            return accommodationResponse.data.data.name || null;
+        } catch (error) {
+            console.error(`Erro ao buscar código da acomodação com ID ${accommodationId}:`, error);
+            return null;
+        }
+    }
+
+    async getBookingsDetailsId(): Promise <{ id: string; statusService: string | null; serviceDate: string | null; referenceService: string; accommodationCode: string | null }[]> {
         const today = new Date().toISOString().split('T')[0];
 
         try {
@@ -78,18 +88,16 @@ export class BookingsService implements OnModuleInit {
                     );
 
                     if (extra) {
-                        const accommodationResponse = await this.apiService.get(`/accommodations/${bookingData.accommodation.id}`);
-                        const accommodationData = accommodationResponse.data.data;
+                        const accommodationCode = await this.getAccommodationCode(bookingData.accommodation.id);
 
                         return {
                             id: bookingData.id,
                             serviceDate: new Date(extra.applicationDate).toISOString().split('T')[0],
-                            accommodationCode: accommodationData.name,
+                            accommodationCode,
                             statusService: extra.info.category?.code || null,
                             referenceService: extra.info.reference,
                         };
                     }
-
                     return null;
                 })
             );
@@ -99,7 +107,6 @@ export class BookingsService implements OnModuleInit {
             return [];
         }
     }
-
 
 }
 

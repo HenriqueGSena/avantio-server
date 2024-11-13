@@ -61,7 +61,7 @@ export class BookingsService implements OnModuleInit {
         }
     }
 
-    async getBookingsDetailsId(): Promise<{ id: string; statusService: string | null; serviceDate: string | null; referenceService: string  }[]> {
+    async getBookingsDetailsId(): Promise<{ id: string; statusService: string | null; serviceDate: string | null; referenceService: string; accommodationCode: string | null }[]> {
         const today = new Date().toISOString().split('T')[0];
 
         try {
@@ -78,9 +78,13 @@ export class BookingsService implements OnModuleInit {
                     );
 
                     if (extra) {
+                        const accommodationResponse = await this.apiService.get(`/accommodations/${bookingData.accommodation.id}`);
+                        const accommodationData = accommodationResponse.data.data;
+
                         return {
                             id: bookingData.id,
                             serviceDate: new Date(extra.applicationDate).toISOString().split('T')[0],
+                            accommodationCode: accommodationData.name,
                             statusService: extra.info.category?.code || null,
                             referenceService: extra.info.reference,
                         };
@@ -89,7 +93,7 @@ export class BookingsService implements OnModuleInit {
                     return null;
                 })
             );
-            return detailsBooking.filter((item) => item !== null) as { id: string; statusService: string | null; serviceDate: string | null; referenceService: string  }[];
+            return detailsBooking.filter((item) => item !== null) as { id: string; statusService: string | null; serviceDate: string | null; referenceService: string; accommodationCode: string | null }[];
         } catch (error) {
             console.error('Erro ao buscar detalhes das reservas por ID:', error);
             return [];

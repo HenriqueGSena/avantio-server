@@ -1,6 +1,7 @@
 import { Injectable, Inject, OnModuleInit } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { BookingStatus } from '../enums/bookingStatus';
+import { ExtrasCategory } from '../enums/extrasCategory';
 
 @Injectable()
 export class BookingsService implements OnModuleInit {
@@ -59,35 +60,41 @@ export class BookingsService implements OnModuleInit {
             return [];
         }
     }
-
-    async getBookingsDetailsId(): Promise<{ id: string; statusService: string | null; serviceDate: string }[]> {
-        // departure: string;
+    
+    async getBookingsDetailsId(): Promise<{ id: string; statusService: string | null; serviceDate: string | null; referenceService: string }[]> {
         try {
             const detailsBooking = await Promise.all(
                 this.confirmedBookingIds.map(async (booking) => {
                     const response = await this.apiService.get(`/bookings/${booking.id}`);
                     const bookingData = response.data.data;
 
-                    return {
-                        id: bookingData.id,
-                        // departure: bookingData.stayDates.departure,
-                        serviceDate: bookingData.extras?.[0]?.applicationDate
-                            ? new Date(bookingData.extras[0].applicationDate).toISOString().split('T')[0] : null,
-                        statusService: bookingData.extras.length > 0 ? bookingData.extras[0].info.category.code : null,
-                        /** TODO:
-                         * Para que o statusService seja exibido ele deverá somente com seu status = "CLEANING";
-                         */
-                    };
+                    const extra = bookingData.extras?.find(
+                        (extraItem: any) =>
+                            extraItem.info?.category?.code === ExtrasCategory.CLEANING ||
+                            extraItem.info?.reference === ExtrasCategory.CLEANING_REFERENCE
+                    );
+
+                    if (extra) {
+                        return {
+                            id: bookingData.id,
+                            serviceDate: extra.applicationDate ? new Date(extra.applicationDate).toISOString().split('T')[0]: null,
+                            statusService: extra.info.category?.code || null,
+                            referenceService: extra.info.reference,
+                        };
+                    }
+
+                    return null;
                 })
             );
 
-            return detailsBooking;
+            return detailsBooking.filter((item) => item !== null) as { id: string; statusService: string | null; serviceDate: string | null; referenceService: string }[];
 
         } catch (error) {
             console.error('Erro ao buscar detalhes das reservas por ID:', error);
             return [];
         }
     }
+
 
 }
 

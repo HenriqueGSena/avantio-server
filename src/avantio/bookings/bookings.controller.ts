@@ -6,9 +6,9 @@ export class BookingsController {
 
     constructor(private readonly bookingService: BookingsService) { }
     
-    @Get()
-    async getAllBookings() {
-        const confirmedBookings = await this.bookingService.getConfirmedBookings();
-        return confirmedBookings;
+    @Get('checkout')
+    async getBookingsDetails() {
+        const bookingsDetails = await this.bookingService.getBookingsDetailsId();
+        return bookingsDetails;
     }
 }

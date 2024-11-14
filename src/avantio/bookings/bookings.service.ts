@@ -10,10 +10,8 @@ export class BookingsService implements OnModuleInit {
 
     async onModuleInit() {
         this.confirmedBookingIds = await this.getConfirmedBookings();
-        // console.log('Ids das reservas confirmadas:', this.confirmedBookingIds);
 
         const bookingDetails = await this.getBookingsDetailsId();
-        console.log('Detalhes das reservas confirmadas:', bookingDetails);
     }
 
     @Cron('0 */15 * * * *')
@@ -27,9 +25,6 @@ export class BookingsService implements OnModuleInit {
             const threeDaysAgo = new Date;
             threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
             const threeDaysAgoFormatted = threeDaysAgo.toISOString().split('T')[0];
-
-            console.log('Data atual:', today);
-            console.log('Data de três dias atrás:', threeDaysAgoFormatted);
 
             const response = await this.apiService.get('/bookings', {
                 params: {
@@ -89,7 +84,6 @@ export class BookingsService implements OnModuleInit {
 
                     if (extra) {
                         const accommodationCode = await this.getAccommodationCode(bookingData.accommodation.id);
-
                         return {
                             id: bookingData.id,
                             serviceDate: new Date(extra.applicationDate).toISOString().split('T')[0],

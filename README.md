@@ -58,9 +58,10 @@ $ npm run build
 $ docker compose -f docker-compose.yml up -d
 ```
 
-## Stack utilizada
+## Stack
 
-**Back-end:** NestJs, NodeJs, Typescript
+**Back-end:** NestJs, NodeJs, Typescript, Prisma, Docker
+**Infrastructure:** Docker, Digital Ocean
 
 ## Autor
 

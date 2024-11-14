@@ -2,7 +2,9 @@
   <a href="http://nestjs.com/" target="blank"><img src="./assets/logo/logo.png" width="400" alt="Nest Logo" /></a>
 </p>
 
-  <p align="center">Pineapples Server API 🍍</p>
+<div>
+  <h2 align="center">Pineapples Server API 🍍</h2>
+</div>
 
 ## Description
 
@@ -50,6 +52,12 @@ $ npm run test:cov
 $ npm run build
 ```
 
+## Generate database tests in docker compose
+
+```bash
+$ docker compose -f docker-compose.yml up -d
+```
+
 ## Stack utilizada
 
 **Back-end:** NestJs, NodeJs, Typescript
@@ -60,7 +68,7 @@ $ npm run build
 
 ## Usado por
 
-Esse projeto é usado pelas seguintes empresas:
+Esse projeto é usado pela seguinte empresa:
 
 - [Pineapples Hospedagem](https://www.pineapples.com.br/en/)
 

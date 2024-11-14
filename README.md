@@ -61,6 +61,9 @@ $ docker compose -f docker-compose.yml up -d
 ## Stack
 
 **Back-end:** NestJs, NodeJs, Typescript, Prisma, Docker
+
+**Database:** PostgreSQL
+
 **Infrastructure:** Docker, Digital Ocean
 
 ## Autor

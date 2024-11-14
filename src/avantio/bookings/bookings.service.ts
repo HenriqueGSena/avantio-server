@@ -66,7 +66,7 @@ export class BookingsService implements OnModuleInit {
         }
     }
 
-    async getBookingsDetailsId(): Promise <{ id: string; statusService: string | null; serviceDate: string | null; referenceService: string; accommodationCode: string | null }[]> {
+    async getBookingsDetailsId(): Promise<{ id: string; statusService: string | null; serviceDate: string | null; referenceService: string; accommodationCode: string | null; }[]> {
         const today = new Date().toISOString().split('T')[0];
 
         try {
@@ -75,11 +75,10 @@ export class BookingsService implements OnModuleInit {
                     const response = await this.apiService.get(`/bookings/${booking.id}`);
                     const bookingData = response.data.data;
 
-                    const extra = bookingData.extras?.find(
-                        (extraItem: any) =>
-                            (extraItem.info?.category?.code === ExtrasCategory.CLEANING ||
-                                extraItem.info?.reference === ExtrasCategory.CLEANING_REFERENCE) &&
-                            new Date(extraItem.applicationDate).toISOString().split('T')[0] === today
+                    const extra = bookingData.extras?.find((extraItem: any) =>
+                        (extraItem.info?.category?.code === ExtrasCategory.CLEANING ||
+                            extraItem.info?.reference === ExtrasCategory.CLEANING_REFERENCE) &&
+                        new Date(extraItem.applicationDate).toISOString().split('T')[0] === today
                     );
 
                     if (extra) {
@@ -95,7 +94,7 @@ export class BookingsService implements OnModuleInit {
                     return null;
                 })
             );
-            return detailsBooking.filter((item) => item !== null) as { id: string; statusService: string | null; serviceDate: string | null; referenceService: string; accommodationCode: string | null }[];
+            return detailsBooking.filter((item) => item !== null) as { id: string; statusService: string | null; serviceDate: string | null; referenceService: string; accommodationCode: string | null; }[];
         } catch (error) {
             console.error('Erro ao buscar detalhes das reservas por ID:', error);
             return [];

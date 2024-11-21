@@ -60,7 +60,7 @@ $ npm run test:cov
 $ npm run build
 ```
 
-## Generate docker build
+## Generate docker image
 
 ```bash
 $ docker compose up --build

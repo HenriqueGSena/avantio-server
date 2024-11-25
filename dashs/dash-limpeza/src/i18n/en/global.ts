@@ -1,11 +1,9 @@
 export const optionsLanguages = {
-    portfolioDevTranslate: {
-        painel: {
-            test: 'Test translation',
+    languages: {
+        dashboard: {
+            cleaning: 'Operação - Limpeza',
         }
     }
 }
-
-
 
 

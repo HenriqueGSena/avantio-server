@@ -1,7 +1,12 @@
 export const optionsLanguages = {
-    languages: {
-        dashboard: {
+    lang: {
+        dash: {
             cleaning: 'Operação - Limpeza',
+        },
+        table: {
+            date: 'Data',
+            accom: 'Acomodação',
+            service: 'Serviço'
         }
     }
 }

@@ -8,7 +8,7 @@
                     </div>
                     <div class="flex flex-col items-center sm:items-start">
                         <span class="text-xl font-bold text-gray-900 sm:text-5xl"
-                            v-text="$t('languages.dashboard.cleaning')">
+                            v-text="$t('lang.dash.cleaning')">
                         </span>
                     </div>
                 </div>

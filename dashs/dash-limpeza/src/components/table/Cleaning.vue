@@ -28,7 +28,7 @@
                                         {{ service.accommodationCode }}
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-gray-900">
-                                        {{ service.statusService }}
+                                        {{ translateService(service.statusService) }}
                                     </td>
                                 </tr>
                             </tbody>

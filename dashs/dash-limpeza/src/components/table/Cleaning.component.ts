@@ -1,5 +1,6 @@
 import { Vue } from "vue-class-component";
-import api from '../../server/api'
+import api from '../../server/api';
+import { StatusService } from "@/interface/statusService";
 
 export default class Cleaning extends Vue {
     public services: any[] = [];
@@ -26,6 +27,10 @@ export default class Cleaning extends Vue {
         // Força a data a ser tratada como local, evitando fuso horário
         const adjustedDate = new Date(`${dateString}T00:00:00`);
         return adjustedDate.toLocaleDateString('pt-BR', options);
+    }
+
+    public translateService(service: string): string {
+        return StatusService[service as keyof typeof StatusService] || service;
     }
 
 }

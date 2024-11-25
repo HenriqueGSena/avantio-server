@@ -20,14 +20,16 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
-                                <tr>
-                                    <td
-                                        class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                        Lindsay Walton</td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">Front-end Developer
+                                <tr v-for="service in services" :key="service.id">
+                                    <td class="whitespace-nowrap py-4 pl-4  font-semibold text-gray-900">
+                                        {{ formatDate(service.serviceDate) }}
                                     </td>
-                                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                        lindsay.walton@example.com</td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-gray-900">
+                                        {{ service.accommodationCode }}
+                                    </td>
+                                    <td class="whitespace-nowrap px-3 py-4 text-gray-900">
+                                        {{ service.statusService }}
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -36,8 +38,6 @@
             </div>
         </div>
     </div>
-
-
 </template>
 
 <script lang="ts" src="./Cleaning.component.ts"></script>

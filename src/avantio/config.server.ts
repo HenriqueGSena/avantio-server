@@ -10,7 +10,7 @@ export class ConfigServiceApi {
     }
 
     get apiKey(): string {
-        return process.env.API_KEY_TEST;
+        return process.env.API_KEY_PROD;
     }
 }
 

@@ -26,30 +26,21 @@ export class BookingsService implements OnModuleInit {
             threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
             const threeDaysAgoFormatted = threeDaysAgo.toISOString().split('T')[0];
 
-            const response = await this.apiService.get('/bookings', {
+            const response = await this.apiService.get('/bookings' ,{
                 params: {
                     departureDate_from: threeDaysAgoFormatted,
                     departureDate_to: today,
+                    status: [
+                        BookingStatus.CONFIRMED,
+                        BookingStatus.UNPAID,
+                        BookingStatus.PAID
+                    ],
                 },
             });
             
             const bookings = response.data.data;
-
-            const filteredBookings = bookings
-                .filter((booking) => {
-                    
-                    return (
-                        (   booking.status === BookingStatus.CONFIRMED ||
-                            booking.status === BookingStatus.UNPAID ||
-                            booking.status === BookingStatus.PAID
-                        )
-                    );
-                })
-                .map((booking) => ({
-                    id: booking.id,
-                }));
-
-            return filteredBookings;
+            console.log(bookings);
+            return bookings;
         } catch (e) {
             console.error('Erro ao retornar lista de ids das reservas', e);
             return [];
@@ -66,7 +57,7 @@ export class BookingsService implements OnModuleInit {
         }
     }
 
-    async getBookingsDetailsId(): Promise<{ id: string; statusService: string | null; serviceDate: string | null; referenceService: string; accommodationCode: string | null; }[]> {
+    async getBookingsDetailsId(): Promise<{ id: string; statusService: string | null; serviceDate: string | null; accommodationCode: string | null; }[]> {
         const today = new Date().toISOString().split('T')[0];
 
         try {
@@ -76,8 +67,7 @@ export class BookingsService implements OnModuleInit {
                     const bookingData = response.data.data;
 
                     const extra = bookingData.extras?.find((extraItem: any) =>
-                        (extraItem.info?.category?.code === ExtrasCategory.CLEANING ||
-                            extraItem.info?.reference === ExtrasCategory.CLEANING_REFERENCE) &&
+                        extraItem.info?.category?.code === ExtrasCategory.CLEANING && 
                         new Date(extraItem.applicationDate).toISOString().split('T')[0] === today
                     );
 
@@ -88,13 +78,14 @@ export class BookingsService implements OnModuleInit {
                             serviceDate: new Date(extra.applicationDate).toISOString().split('T')[0],
                             accommodationCode,
                             statusService: extra.info.category?.code || null,
-                            referenceService: extra.info.reference,
                         };
                     }
                     return null;
                 })
             );
-            return detailsBooking.filter((item) => item !== null) as { id: string; statusService: string | null; serviceDate: string | null; referenceService: string; accommodationCode: string | null; }[];
+            const filteredDetails = detailsBooking.filter((item) => item !== null);
+
+            return filteredDetails as { id: string; statusService: string | null; serviceDate: string | null; accommodationCode: string | null; }[];
         } catch (error) {
             console.error('Erro ao buscar detalhes das reservas por ID:', error);
             return [];

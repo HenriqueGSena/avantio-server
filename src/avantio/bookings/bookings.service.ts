@@ -22,18 +22,16 @@ export class BookingsService implements OnModuleInit {
     async getConfirmedBookings(): Promise<{ id: string }[]> {
         try {
             const today = new Date().toISOString().split('T')[0];
-            const threeDaysAgo = new Date;
-            threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-            const threeDaysAgoFormatted = threeDaysAgo.toISOString().split('T')[0];
+            // const threeDaysAgo = new Date;
+            // threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+            // const threeDaysAgoFormatted = threeDaysAgo.toISOString().split('T')[0];
 
             const response = await this.apiService.get('/bookings' ,{
                 params: {
-                    departureDate_from: threeDaysAgoFormatted,
+                    departureDate_from: today,
                     departureDate_to: today,
                     status: [
-                        BookingStatus.CONFIRMED,
-                        BookingStatus.UNPAID,
-                        BookingStatus.PAID
+                        BookingStatus.CONFIRMED
                     ],
                 },
             });

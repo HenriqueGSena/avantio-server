@@ -1,3 +1,3 @@
 export enum StatusService {
-    CLEANING = 'Limpeza Final'
+    CLEANING = 'Limpeza'
 }

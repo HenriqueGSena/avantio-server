@@ -14,33 +14,43 @@ export class BookingsService implements OnModuleInit {
         const bookingDetails = await this.getBookingsDetailsId();
     }
 
-    @Cron('0 */15 * * * *')
-    async checkBookings() {
-        this.confirmedBookingIds = await this.getConfirmedBookings();
-    }
+    // @Cron('0 */15 * * * *')
+    // async checkBookings() {
+    //     this.confirmedBookingIds = await this.getConfirmedBookings();
+    // }
 
     async getConfirmedBookings(): Promise<{ id: string }[]> {
         try {
             const today = new Date().toISOString().split('T')[0];
-            // const threeDaysAgo = new Date;
-            // threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-            // const threeDaysAgoFormatted = threeDaysAgo.toISOString().split('T')[0];
 
-            const response = await this.apiService.get('/bookings' ,{
-                params: {
-                    departureDate_from: today,
-                    departureDate_to: today,
-                    status: [
-                        BookingStatus.CONFIRMED
-                    ],
-                },
-            });
-            
-            const bookings = response.data.data;
-            console.log(bookings);
-            return bookings;
+            const threeDaysAgo = new Date;
+            threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+            const threeDaysAgoFormatted = threeDaysAgo.toISOString().split('T')[0];
+
+            let url: string | null = '/bookings';
+            let firstRequest = true;
+
+            while (url) {
+                const response = await this.apiService.get( url, {
+                    params: firstRequest ? {
+                        pagination_size: 50,
+                        departureDate_from: threeDaysAgoFormatted,
+                        departureDate_to: today,
+                        status: [
+                            BookingStatus.CONFIRMED,
+                        ]
+                    }: {},
+                });
+
+                const data = response.data;
+                this.confirmedBookingIds = this.confirmedBookingIds.concat(data.data);
+
+                url = data._links.next || null;
+                firstRequest = false;
+            }
+            return this.confirmedBookingIds
         } catch (e) {
-            console.error('Erro ao retornar lista de ids das reservas', e);
+            console.error('Erro ao retornar lista de ids das reservas:', e);
             return [];
         }
     }

@@ -1,6 +1,6 @@
 <template>
     <div class="px-4 sm:px-6 lg:px-8">
-        <div class="mt-8 flow-root">
+        <div class="mt-4 flow-root">
             <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                     <div class="overflow-hidden shadow ring-1 ring-black/5 sm:rounded-lg">
@@ -20,7 +20,7 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 bg-white">
-                                <tr v-for="service in services" :key="service.id">
+                                <tr v-for="service in paginatedServices" :key="service.id">
                                     <td class="whitespace-nowrap py-4 pl-4  font-semibold text-gray-900">
                                         {{ formatDate(service.serviceDate) }}
                                     </td>
@@ -33,6 +33,12 @@
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                    <div class="flex justify-center items-center mt-2">
+                        <div class="inline-flex bg-gray-50 rounded-md px-4 py-2">
+                            <span>{{ $t('lang.table.page') }} {{ currentPage }} {{ $t('lang.table.de') }} {{ totalPages
+                                }}</span>
+                        </div>
                     </div>
                 </div>
             </div>

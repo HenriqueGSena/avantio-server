@@ -6,7 +6,9 @@ export const optionsLanguages = {
         table: {
             date: 'Data',
             accom: 'Acomodação',
-            service: 'Serviço'
+            service: 'Serviço',
+            page: 'Página',
+            de: 'de'
         }
     }
 }

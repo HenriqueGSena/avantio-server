@@ -20,11 +20,11 @@ jobs:
 
       - name: Build and push Docker image for pine-server
         run: |
-          docker build -t henrique27/pine-server:tagname ./pine-server
-          docker push docker push henrique27/pine-server:tagname/pine-server
+          docker build -t henrique27/pine-server:tagname/pine-server ./pine-server
+          docker push your_dockerhub_username/pine-server
 
       - name: SSH into DigitalOcean and deploy pine-server
         env:
           DIGITALOCEAN_PASSWORD: ${{ secrets.DIGITALOCEAN_PASSWORD }}
         run: |
-          sshpass -p "$DIGITALOCEAN_PASSWORD" ssh -o StrictHostKeyChecking=no root@167.172.106.156 "docker pull docker push henrique27/pine-server:tagname/pine-server && docker-compose -f /path/to/docker-compose.yml up -d"
+          sshpass -p "$DIGITALOCEAN_PASSWORD" ssh -o StrictHostKeyChecking=no root@167.172.106.156 "docker pull your_dockerhub_username/pine-server && docker-compose -f /path/to/docker-compose.yml up -d"

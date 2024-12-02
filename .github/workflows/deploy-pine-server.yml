@@ -20,7 +20,7 @@ jobs:
 
       - name: Build and push Docker image for pine-server
         run: |
-          docker buildx build -t henrique27/pine-server:tagname ./pine-server
+          docker build -t henrique27/pine-server:tagname ./pine-server
           docker push docker push henrique27/pine-server:tagname/pine-server
 
       - name: SSH into DigitalOcean and deploy pine-server

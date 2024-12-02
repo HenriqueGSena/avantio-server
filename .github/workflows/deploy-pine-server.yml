@@ -2,11 +2,9 @@ name: Pine Server
 
 on:
   pull_request:
-    branches:
-      - main
+    branches: [main]
   push:
-    branches:
-      - main
+    branches: [main]
     paths:
       - 'pine-server/**'
 

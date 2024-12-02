@@ -1,4 +1,4 @@
-name: Pine Server
+name: Pine Server Application
 
 on:
   pull_request:

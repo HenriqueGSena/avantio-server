@@ -30,11 +30,11 @@ jobs:
 
       - name: Build and push Docker image for dash-limpeza
         run: |
-          docker build -t your_dockerhub_username/dash-limpeza ./dashs/dash-limpeza
-          docker push your_dockerhub_username/dash-limpeza
+          docker build -t henrique27/pine-server-application:tagname/dash-limpeza ./dashs/dash-limpeza
+          docker push henrique27/pine-server-application:tagname/dash-limpeza
 
       - name: Deploy to DigitalOcean
         env:
           DIGITALOCEAN_PASSWORD: ${{ secrets.DIGITALOCEAN_PASSWORD }}
         run: |
-          sshpass -p "$DIGITALOCEAN_PASSWORD" ssh -o StrictHostKeyChecking=no root@167.172.106.156 "docker pull your_dockerhub_username/dash-limpeza && docker-compose -f /path/to/docker-compose.yml up -d"
+          sshpass -p "$DIGITALOCEAN_PASSWORD" ssh -o StrictHostKeyChecking=no root@167.172.106.156 "docker pull henrique27/pine-server-application:tagname/dash-limpeza && docker-compose -f /path/to/docker-compose.yml up -d"

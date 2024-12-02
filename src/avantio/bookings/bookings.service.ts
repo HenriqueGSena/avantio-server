@@ -14,44 +14,43 @@ export class BookingsService implements OnModuleInit {
         const bookingDetails = await this.getBookingsDetailsId();
     }
 
-    @Cron('0 */15 * * * *')
-    async checkBookings() {
-        this.confirmedBookingIds = await this.getConfirmedBookings();
-    }
+    // @Cron('0 */15 * * * *')
+    // async checkBookings() {
+    //     this.confirmedBookingIds = await this.getConfirmedBookings();
+    // }
 
     async getConfirmedBookings(): Promise<{ id: string }[]> {
         try {
             const today = new Date().toISOString().split('T')[0];
+
             const threeDaysAgo = new Date;
             threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
             const threeDaysAgoFormatted = threeDaysAgo.toISOString().split('T')[0];
 
-            const response = await this.apiService.get('/bookings', {
-                params: {
-                    departureDate_from: threeDaysAgoFormatted,
-                    departureDate_to: today,
-                },
-            });
-            
-            const bookings = response.data.data;
+            let url: string | null = '/bookings';
+            let firstRequest = true;
 
-            const filteredBookings = bookings
-                .filter((booking) => {
-                    
-                    return (
-                        (   booking.status === BookingStatus.CONFIRMED ||
-                            booking.status === BookingStatus.UNPAID ||
-                            booking.status === BookingStatus.PAID
-                        )
-                    );
-                })
-                .map((booking) => ({
-                    id: booking.id,
-                }));
+            while (url) {
+                const response = await this.apiService.get( url, {
+                    params: firstRequest ? {
+                        pagination_size: 50,
+                        departureDate_from: threeDaysAgoFormatted,
+                        departureDate_to: today,
+                        status: [
+                            BookingStatus.CONFIRMED,
+                        ]
+                    }: {},
+                });
 
-            return filteredBookings;
+                const data = response.data;
+                this.confirmedBookingIds = this.confirmedBookingIds.concat(data.data);
+
+                url = data._links.next || null;
+                firstRequest = false;
+            }
+            return this.confirmedBookingIds
         } catch (e) {
-            console.error('Erro ao retornar lista de ids das reservas', e);
+            console.error('Erro ao retornar lista de ids das reservas:', e);
             return [];
         }
     }
@@ -66,7 +65,7 @@ export class BookingsService implements OnModuleInit {
         }
     }
 
-    async getBookingsDetailsId(): Promise <{ id: string; statusService: string | null; serviceDate: string | null; referenceService: string; accommodationCode: string | null }[]> {
+    async getBookingsDetailsId(): Promise<{ id: string; statusService: string | null; serviceDate: string | null; accommodationCode: string | null; }[]> {
         const today = new Date().toISOString().split('T')[0];
 
         try {
@@ -75,11 +74,9 @@ export class BookingsService implements OnModuleInit {
                     const response = await this.apiService.get(`/bookings/${booking.id}`);
                     const bookingData = response.data.data;
 
-                    const extra = bookingData.extras?.find(
-                        (extraItem: any) =>
-                            (extraItem.info?.category?.code === ExtrasCategory.CLEANING ||
-                                extraItem.info?.reference === ExtrasCategory.CLEANING_REFERENCE) &&
-                            new Date(extraItem.applicationDate).toISOString().split('T')[0] === today
+                    const extra = bookingData.extras?.find((extraItem: any) =>
+                        extraItem.info?.category?.code === ExtrasCategory.CLEANING && 
+                        new Date(extraItem.applicationDate).toISOString().split('T')[0] === today
                     );
 
                     if (extra) {
@@ -89,13 +86,14 @@ export class BookingsService implements OnModuleInit {
                             serviceDate: new Date(extra.applicationDate).toISOString().split('T')[0],
                             accommodationCode,
                             statusService: extra.info.category?.code || null,
-                            referenceService: extra.info.reference,
                         };
                     }
                     return null;
                 })
             );
-            return detailsBooking.filter((item) => item !== null) as { id: string; statusService: string | null; serviceDate: string | null; referenceService: string; accommodationCode: string | null }[];
+            const filteredDetails = detailsBooking.filter((item) => item !== null);
+
+            return filteredDetails as { id: string; statusService: string | null; serviceDate: string | null; accommodationCode: string | null; }[];
         } catch (error) {
             console.error('Erro ao buscar detalhes das reservas por ID:', error);
             return [];

@@ -17,6 +17,10 @@ git clone https://github.com/HenriqueGSena/avantio-server.git
 ```
 
 ```bash
+cd avantio-server
+```
+
+```bash
 $ npm install
 ```
 
@@ -24,7 +28,11 @@ $ npm install
 
 ```bash
 # development
-$ npm run start or npm run start
+$ npm run start 
+
+or 
+
+$ npm run dev
 
 # watch mode
 $ npm run start:dev
@@ -52,10 +60,10 @@ $ npm run test:cov
 $ npm run build
 ```
 
-## Generate database tests in docker compose
+## Generate docker image
 
 ```bash
-$ docker compose -f docker-compose.yml up -d
+$ docker compose up --build
 ```
 
 ## Stack

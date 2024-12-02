@@ -4,13 +4,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: avantio-server-app
+    image: pineapples-server-app
     restart: always
     environment:
       - TZ=America/Sao_Paulo
     ports:
       - "8080:8080"
-    container_name: avantio-server
+    container_name: pineapples-server
 
 #   postgres:
 #     image: postgres:16.4

@@ -1,0 +1,16 @@
+version: '3.9'
+services:
+  dash-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pineapples-dashboard-app
+    restart: always
+    environment:
+      - TZ=America/Sao_Paulo
+    ports:
+      - "3000:80"
+    container_name: pineapples-dashboard
+
+
+

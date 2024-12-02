@@ -1,6 +1,9 @@
-name: Pine Server to DigitalOcean
+name: Pine Server
 
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - main

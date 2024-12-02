@@ -1,0 +1,29 @@
+name: Pine Server to DigitalOcean
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'pine-server/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install SSH pass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
+      - name: Build and push Docker image for pine-server
+        run: |
+          docker build -t your_dockerhub_username/pine-server ./pine-server
+          docker push your_dockerhub_username/pine-server
+
+      - name: SSH into DigitalOcean and deploy pine-server
+        env:
+          DIGITALOCEAN_PASSWORD: ${{ secrets.DIGITALOCEAN_PASSWORD }}
+        run: |
+          sshpass -p "$DIGITALOCEAN_PASSWORD" ssh -o StrictHostKeyChecking=no root@167.172.106.156 "docker pull your_dockerhub_username/pine-server && docker-compose -f /path/to/docker-compose.yml up -d"

@@ -17,7 +17,7 @@ git clone https://github.com/HenriqueGSena/avantio-server.git
 ```
 
 ```bash
-cd avantio-server
+cd pine-server or cd dashs
 ```
 
 ```bash
@@ -28,7 +28,7 @@ $ npm install
 
 ```bash
 # development
-$ npm run start 
+$ npm start 
 
 or 
 
@@ -68,7 +68,9 @@ $ docker compose up --build
 
 ## Stack
 
-**Back-end:** NestJs, NodeJs, Typescript, Prisma, Docker
+**Front-end:** Vue 3, Vue-i18n, Typescript, Axios
+
+**Back-end:** NestJs, NodeJs, Typescript, Prisma
 
 **Database:** PostgreSQL
 

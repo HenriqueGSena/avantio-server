@@ -1,0 +1,49 @@
+name: Pine Server Application
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Backend
+    runs-on: ubuntu-22.04
+
+    steps:
+    # Etapa 1: Checkout do código
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    # Etapa 2: Configurar SSH para acesso ao servidor
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.PINE_SERVER }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H 167.172.106.156 >> ~/.ssh/known_hosts
+
+    # Etapa 3: Construir e salvar a imagem Docker usando o docker-compose
+    - name: Build and Save Docker Image
+      run: |
+        docker-compose -f pine-server/docker-compose.yml build
+        docker save pineapples-server-app -o avantio-backend.tar
+
+    # Etapa 4: Enviar o arquivo da imagem para o servidor
+    - name: Transfer Docker Image to Server
+      run: |
+        scp avantio-backend.tar root@167.172.106.156:/tmp/avantio-backend.tar
+    
+    # Etapa 5: Fazer o deploy no servidor
+    - name: Deploy Backend
+      run: |
+        ssh root@167.172.106.156 << 'EOF'
+          docker load < /tmp/avantio-backend.tar
+          docker-compose -f /path/to/docker-compose.yml up -d --no-deps avantio-app
+          rm /tmp/avantio-backend.tar
+        EOF
+
+    # Etapa 6: Limpeza no ambiente local do runner
+    - name: Clean Up Local Artifacts
+      run: rm avantio-backend.tar

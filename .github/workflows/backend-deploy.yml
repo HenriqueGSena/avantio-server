@@ -33,7 +33,7 @@ jobs:
     # Etapa 4: Construir e salvar a imagem Docker usando o Docker Compose
     - name: Build and Save Docker Image
       run: |
-        docker-compose -f pine-server/docker-compose.yml build
+        docker-compose -f pine-serve/docker-compose.yml build
         docker save pineapples-server-app -o avantio-backend.tar
 
     # Etapa 5: Enviar o arquivo da imagem para o servidor

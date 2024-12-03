@@ -24,18 +24,24 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H 167.172.106.156 >> ~/.ssh/known_hosts
 
-    # Etapa 3: Construir e salvar a imagem Docker usando o docker-compose
+    # Etapa 3: Instalar o Docker Compose (caso necessário)
+    - name: Install Docker Compose
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y docker-compose
+
+    # Etapa 4: Construir e salvar a imagem Docker usando o Docker Compose
     - name: Build and Save Docker Image
       run: |
         docker compose -f pine-server/docker-compose.yml build
         docker save pineapples-server-app -o avantio-backend.tar
 
-    # Etapa 4: Enviar o arquivo da imagem para o servidor
+    # Etapa 5: Enviar o arquivo da imagem para o servidor
     - name: Transfer Docker Image to Server
       run: |
         scp avantio-backend.tar root@167.172.106.156:/tmp/avantio-backend.tar
     
-    # Etapa 5: Fazer o deploy no servidor
+    # Etapa 6: Fazer o deploy no servidor
     - name: Deploy Backend
       run: |
         ssh root@167.172.106.156 << 'EOF'
@@ -44,6 +50,6 @@ jobs:
           rm /tmp/avantio-backend.tar
         EOF
 
-    # Etapa 6: Limpeza no ambiente local do runner
+    # Etapa 7: Limpeza no ambiente local do runner
     - name: Clean Up Local Artifacts
       run: rm avantio-backend.tar

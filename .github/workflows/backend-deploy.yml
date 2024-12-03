@@ -22,9 +22,10 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.PINE_SERVER }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H 167.172.106.156 >> ~/.ssh/known_hosts
+        cp ~/.ssh/known_hosts ~/.ssh/known_hosts
+        chmod 644 ~/.ssh/known_hosts
 
-    # Etapa 3: Instalar o Docker Compose (caso necessário)
+    # Etapa 3: Instalar o Docker Compose
     - name: Install Docker Compose
       run: |
         sudo apt-get update

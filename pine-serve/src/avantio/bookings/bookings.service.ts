@@ -37,7 +37,7 @@ export class BookingsService implements OnModuleInit {
                         departureDate_from: threeDaysAgoFormatted,
                         departureDate_to: today,
                         status: [
-                            BookingStatus.CONFIRMED,
+                            BookingStatus.CONFIRMED
                         ]
                     }: {},
                 });
@@ -55,17 +55,19 @@ export class BookingsService implements OnModuleInit {
         }
     }
 
-    private async getAccommodationCode(accommodationId:string): Promise<string | null> {
+    private async getAccommodationDetails(accommodationId: string): Promise<{ name: string | null}> {
         try {
-            const accommodationResponse = await this.apiService.get(`/accommodations/${accommodationId}`);
-            return accommodationResponse.data.data.name || null;
+            const accResponse = await this.apiService.get(`/accommodations/${accommodationId}`);
+            const accData = accResponse.data.data;
+            
+            return accData;
         } catch (error) {
             console.error(`Erro ao buscar código da acomodação com ID ${accommodationId}:`, error);
-            return null;
+            return;
         }
     }
 
-    async getBookingsDetailsId(): Promise<{ id: string; statusService: string | null; serviceDate: string | null; accommodationCode: string | null; }[]> {
+    async getBookingsDetailsId(): Promise<{ id: string; statusService: string | null; serviceDate: string | null; accCode: string | null; }[]> {
         const today = new Date().toISOString().split('T')[0];
 
         try {
@@ -80,11 +82,11 @@ export class BookingsService implements OnModuleInit {
                     );
 
                     if (extra) {
-                        const accommodationCode = await this.getAccommodationCode(bookingData.accommodation.id);
+                        const accDetails = await this.getAccommodationDetails(bookingData.accommodation.id);
                         return {
                             id: bookingData.id,
                             serviceDate: new Date(extra.applicationDate).toISOString().split('T')[0],
-                            accommodationCode,
+                            accCode: accDetails.name,
                             statusService: extra.info.category?.code || null,
                         };
                     }
@@ -93,7 +95,7 @@ export class BookingsService implements OnModuleInit {
             );
             const filteredDetails = detailsBooking.filter((item) => item !== null);
 
-            return filteredDetails as { id: string; statusService: string | null; serviceDate: string | null; accommodationCode: string | null; }[];
+            return filteredDetails as { id: string; statusService: string | null; serviceDate: string | null; accCode: string | null; }[];
         } catch (error) {
             console.error('Erro ao buscar detalhes das reservas por ID:', error);
             return [];

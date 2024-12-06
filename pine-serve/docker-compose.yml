@@ -11,23 +11,5 @@ services:
     ports:
       - "8080:8080"
     container_name: pineapples-server
+    command: ["npm", "run", "start:prod"]
 
-#   postgres:
-#     image: postgres:16.4
-#     container_name: db-avantio
-#     environment:
-#       POSTGRES_USER: admin
-#       POSTGRES_PASSWORD: admin123
-#       POSTGRES_DB: avantio-test
-#     ports:
-#       - "5432:5432"
-#     volumes:
-#       - postgres_data:/var/lib/postgresql/data
-#     networks:
-#       - db_network
-    
-# volumes:
-#   postgres_data:
-
-# networks:
-#   db_network:

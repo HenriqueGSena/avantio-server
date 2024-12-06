@@ -21,7 +21,6 @@ export default class Cleaning extends Vue {
     public async loadServices() {
         try {
             this.services = await this.apiService.getAllServicesCleaning();
-            console.log('Serviços carregados:', this.services);
         } catch (err) {
             console.error("Erro ao carregar serviços", err);
         }

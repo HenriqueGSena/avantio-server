@@ -25,7 +25,7 @@
                                         {{ formatDate(service.serviceDate) }}
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-gray-900">
-                                        {{ service.accommodationCode }}
+                                        {{ service.accCode }}
                                     </td>
                                     <td class="whitespace-nowrap px-3 py-4 text-gray-900">
                                         {{ translateService(service.statusService) }}

@@ -1,0 +1,16 @@
+export enum Channels {
+    AIRBNB = 'AIRBNB',
+    BOOKING = 'BOOKING',
+    CHECKIN = 'CHECKIN',
+    HOMEAWAY = 'HOMEAWAY',
+    INBOX = 'INBOX',
+    INTRANET = 'INTRANET',
+    OLB = 'OLB',
+    VRBO = 'VRBO',
+    VRBO_INQUIRY = 'VRBO_INQUIRY',
+    VRMS_BOP = 'VRMS_BOP',
+    VRMS_HARMONY = 'VRMS_HARMONY',
+    VRMS_PAYMENTS = 'VRMS_PAYMENTS',
+    WHATSAPP = 'WHATSAPP',
+    SMS = 'SMS',
+}

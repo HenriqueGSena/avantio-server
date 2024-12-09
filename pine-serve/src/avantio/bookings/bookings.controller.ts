@@ -8,7 +8,12 @@ export class BookingsController {
     
     @Get('checkout')
     async getBookingsDetails() {
-        const bookingsDetails = await this.bookingService.getBookingsDetailsId();
-        return bookingsDetails;
+        try {
+            const bookingsDetails = await this.bookingService.getBookingsDetailsId();
+            return bookingsDetails;
+        } catch (e) {
+            console.error('Erro ao fazer a requisicao de bookings', e);
+            throw e;
+        }
     }
 }

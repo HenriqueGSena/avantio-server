@@ -1,12 +1,19 @@
-import { Injectable, Inject, OnModuleInit } from '@nestjs/common';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { ConfigServiceApi } from '../../config/config.server';
+import { createAxiosClient } from '../../config/config.factory';
 import { Cron } from '@nestjs/schedule';
 import { BookingStatus } from '../enums/bookingStatus';
 import { ExtrasCategory } from '../enums/extrasCategory';
 
 @Injectable()
 export class BookingsService implements OnModuleInit {
+    
+    private readonly apiService;
     private confirmedBookingIds: { id: string }[] = [];
-    constructor(@Inject('API_SERVICE') private readonly apiService) { }
+
+    constructor(private readonly configService: ConfigServiceApi) {
+        this.apiService = createAxiosClient(this.configService)
+    }
 
     async onModuleInit() {
         this.confirmedBookingIds = await this.getConfirmedBookings();

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { ApiModule } from './avantio/api.module';
+import { ApiModuleAvantio } from './avantio/api.module.avantio';
 
 @Module({
-  imports: [ApiModule]
+  imports: [ApiModuleAvantio]
 })
 export class AppModule {}

@@ -3,10 +3,12 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigServiceApi } from '../config/config.server';
 import { BookingsController } from './bookings/bookings.controller';
 import { BookingsService } from './bookings/bookings.service';
+import { MessagingController } from './messaging/messagingController';
+import { MessagingService } from './messaging/messagingServer';
 
 @Module({
   imports: [ScheduleModule.forRoot()],
-  controllers: [BookingsController],
-  providers: [ConfigServiceApi, BookingsService],
+  controllers: [BookingsController, MessagingController],
+  providers: [ConfigServiceApi, BookingsService, MessagingService],
 })
-export class ApiModule {}
+export class ApiModuleAvantio {}

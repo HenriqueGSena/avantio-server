@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigServiceApi } from '../../config/config.server';
 import { createAxiosClient } from '../../config/config.factory';
+import { BookingStatus } from '../enums/bookingStatus';
 
 @Injectable()
 export class MessagingService implements OnModuleInit {
@@ -17,23 +18,19 @@ export class MessagingService implements OnModuleInit {
         this.listIdsMessaging = await this.getListThreadsMessages();
     }
 
-    async getListThreadsMessages(): Promise<{ id: string }[]> {
+    public async getListThreadsMessages(): Promise<{ id: string }[]> {
         try {
             let url: string | null = '/threads';
             const paginationSize = 100;
-            let firstRequest = true;
 
             const response = await this.apiService.get(url, {
-                params: firstRequest ? {
+                params: {
                     pagination_size: paginationSize,
-                } : {},
+                },
             });
 
             const data = response.data;
             this.listIdsMessaging = this.listIdsMessaging.concat(data.data);
-
-            url = data._links.next || null;
-            firstRequest = false;
 
             return this.listIdsMessaging
         } catch (e) {

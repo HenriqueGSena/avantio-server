@@ -7,7 +7,7 @@ export class MessagingController {
     constructor(private readonly messagingService: MessagingService) { }
 
     @Get('threads')
-    async getListThreads() {
+    public async getListThreads() {
         try {
             const threadId = await this.messagingService.getListThreadsMessages();
             return threadId;

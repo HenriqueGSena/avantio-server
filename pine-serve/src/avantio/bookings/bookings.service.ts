@@ -15,9 +15,8 @@ export class BookingsService implements OnModuleInit {
         this.apiService = createAxiosClient(this.configService)
     }
 
-    async onModuleInit() {
+    public async onModuleInit() {
         this.confirmedBookingIds = await this.getConfirmedBookings();
-
         const bookingDetails = await this.getBookingsDetailsId();
     }
 
@@ -26,7 +25,7 @@ export class BookingsService implements OnModuleInit {
     //     this.confirmedBookingIds = await this.getConfirmedBookings();
     // }
 
-    async getConfirmedBookings(): Promise<{ id: string }[]> {
+    public async getConfirmedBookings(): Promise<{ id: string }[]> {
         try {
             const today = new Date().toISOString().split('T')[0];
 
@@ -36,11 +35,12 @@ export class BookingsService implements OnModuleInit {
 
             let url: string | null = '/bookings';
             let firstRequest = true;
+            const paginationSize = 50;
 
             while (url) {
                 const response = await this.apiService.get( url, {
                     params: firstRequest ? {
-                        pagination_size: 50,
+                        pagination_size: paginationSize,
                         departureDate_from: threeDaysAgoFormatted,
                         departureDate_to: today,
                         status: [
@@ -74,7 +74,7 @@ export class BookingsService implements OnModuleInit {
         }
     }
 
-    async getBookingsDetailsId(): Promise<{ id: string; statusService: string | null; serviceDate: string | null; accCode: string | null; }[]> {
+    public async getBookingsDetailsId(): Promise<{ id: string; statusService: string | null; serviceDate: string | null; accCode: string | null; }[]> {
         const today = new Date().toISOString().split('T')[0];
 
         try {

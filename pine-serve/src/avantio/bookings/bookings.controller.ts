@@ -7,7 +7,7 @@ export class BookingsController {
     constructor(private readonly bookingService: BookingsService) { }
     
     @Get('checkout')
-    async getBookingsDetails() {
+    public async getBookingsDetails() {
         try {
             const bookingsDetails = await this.bookingService.getBookingsDetailsId();
             return bookingsDetails;

@@ -26,15 +26,19 @@ export class MessagingService implements OnModuleInit {
         try {
             const startOfYear = new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0];
             const today = new Date().toISOString().split('T')[0];
+            const threeDaysAgo = new Date;
+            threeDaysAgo.setDate(threeDaysAgo.getDate() - 7);
+            const threeDaysAgoFormat = threeDaysAgo.toISOString().split('T')[0];
 
-            console.log('Data do início do ano:', startOfYear);
+            console.log('Data de sete dias:', startOfYear);
             console.log('Segue a data atual:', today);
 
             let url: string | null = '/threads';
             let firstRequest = true;
-            const paginationSize = Math.min(30, 100);
+            const paginationSize = 10;
             this.listIdsMessaging = [];
             console.log('Inicializando a lista vazia', this.listIdsMessaging);
+
             while (url) {
                 const response = await this.apiService.get(url, {
                     params: firstRequest ? {
@@ -42,7 +46,7 @@ export class MessagingService implements OnModuleInit {
                         booking_creationDate_from: startOfYear,
                         booking_creationDate_to: today,
                     } : {},
-                    timeout: 60000,
+                    timeout: 120000,
                 });
                 const data = response.data;
                 console.log('Data retornada:', data);

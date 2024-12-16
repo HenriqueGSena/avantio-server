@@ -17,10 +17,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prisma:migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev",
-    "prisma:migrate:prod": "dotenv -e .env.production -- npx prisma migrate deploy",
-    "prisma:studio:dev": "dotenv -e .env.development -- npx prisma studio",
-    "prisma:studio:prod": "dotenv -e .env.production -- npx prisma studio"
+    "prisma:migrate:dev": "dotenv -e .env.development -- npx prisma migrate dev --schema=prisma/schemaLocal.prisma",
+    "prisma:migrate:prod": "dotenv -e .env.production -- npx prisma migrate deploy --schema=prisma/schema.prisma"
   },
   "dependencies": {
     "@nestjs/axios": "^3.1.1",

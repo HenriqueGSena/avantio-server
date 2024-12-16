@@ -1,7 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigServiceApi } from '../../config/config.server';
 import { createAxiosClient } from '../../config/config.factory';
-import { BookingStatus } from '../enums/bookingStatus';
 
 @Injectable()
 export class MessagingService implements OnModuleInit {

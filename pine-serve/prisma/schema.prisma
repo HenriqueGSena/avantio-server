@@ -8,10 +8,9 @@ generator client {
   provider = "prisma-client-js"
 }
 
-datasource db {
+datasource db_prod {
   provider     = "postgresql"
-  url          = env("POSTGRES_URL_DEV")
-  relationMode = "prisma"
+  url          = env("DATABASE_URL")
 }
 
 model bookings {
@@ -26,28 +25,4 @@ model bookings {
   external_data      String[]
   creation_date      DateTime @default(now())
   updated_at         DateTime
-}
-
-model users {
-  id            String   @id @unique
-  name          String
-  surnames      String
-  email         String
-  phone         String
-  creation_date DateTime
-  last_updated  DateTime
-  country       String
-  postal_code   String
-  phones        String[]
-  language      String
-}
-
-model accommodations {
-  id      String @id @unique
-  name    String
-  type    String
-  status  String
-  units   String
-  subType String
-  purpose String
 }

@@ -14,13 +14,11 @@ export class MessagingService implements OnModuleInit {
     }
 
     public async onModuleInit() {
-        this.listIdsMessaging = await this.getListThreadsMessages();
-        console.log("List of IDs:", this.listIdsMessaging);
+        // this.listIdsMessaging = await this.getListThreadsMessages();
+        // console.log("List of IDs:", this.listIdsMessaging);
     }
 
     public async getListThreadsMessages(): Promise<{ id: string }[]> {
-
-        // todo: resolver erro 504 na requisição feita para criar a lista de id threads;
 
         try {
             const startOfYear = new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0];

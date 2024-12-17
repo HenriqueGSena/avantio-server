@@ -9,20 +9,22 @@ generator client {
 }
 
 datasource db {
-  provider     = "postgresql"
-  url          = env("DATABASE_URL_DEV")
+  provider     = "postgres"
+  url          = env("DATABASE_URL")
 }
 
-model bookings {
-  id                 String   @id @unique
-  localizer          String
-  status             String
-  booking_date       String
-  company_id         String?
-  accommodation_code String
-  arrival            DateTime
-  departure          DateTime
-  external_data      String[]
-  creation_date      DateTime @default(now())
-  updated_at         DateTime
+model messaging {
+  id                 Int    @id @default(autoincrement())
+  thread_id          String @unique
+  channel            String[]
+  booking_id         String @unique
+  notified_count     String                              // quantidade de notificações
+  send_count         String                              // quantidade de envios de menssagens
+  total_messages     String                              // Quantidade total de mensagens
+  average_time       Float                               // Tempo médio entre mensagens
+  max_time           Float                               // Maior tempo entre mensagens
+  min_time           Float                               // Menor tempo entre mensagens
+  source             String
+  sync_status        String
+  created_at         DateTime @default(now())
 }

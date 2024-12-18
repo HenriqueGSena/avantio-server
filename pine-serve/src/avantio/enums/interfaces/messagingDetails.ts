@@ -1,5 +1,4 @@
 export interface MessagingDetails {
-    id: string;
     threadId: string;
     channel: string[];
     booking_Id: string;

@@ -16,64 +16,61 @@ export class MessagingService implements OnModuleInit {
 
     public async onModuleInit() {
         this.listIdsMessaging = await this.getListThreadsMessages();
-        console.log("IDs retornados dentro da lista:", this.listIdsMessaging);
     }
 
     public async getListThreadsMessages(): Promise<{ id: string }[]> {
         try {
-            // const startOfYear = new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0];
-
-            const startOfMonth = new Date(new Date().getMonth() - 1);
-
+            const startOfYear = new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0];
+            const mounth = new Date("2024-12-01").toISOString().split('T')[0];
             const today = new Date().toISOString().split('T')[0];
 
-            console.log('Um tres dias atrás:', startOfMonth);
+            console.log('Um tres dias atrás:', mounth);
             console.log('Data Atual:', today);
 
-            let threadsById: string | null = '/threads';
+            let url: string | null = '/threads';
             let firstRequest = true;
-            const paginationSize = 30;
+            const paginationSize = 50;
 
             this.listIdsMessaging = [];
             console.log('Inicializando a aplicação com a lista vazia:', this.listIdsMessaging);
 
-            while (threadsById) {
-                console.log(`Iniciando a requisição para o endpoint: ${threadsById}`);
-                const response = await this.apiService.get(threadsById, {
-                    params: firstRequest
-                        ? {
-                            pagination_size: paginationSize,
-                            booking_creationDate_from: startOfMonth,
-                            booking_creationDate_to: today,
-                        }
-                        : {},
-                    timeout: 30000,
+            let pageCounter = 1;
+
+            while (url) {
+                console.log(`\nRequisição para o endpoint: ${url}`);
+                const response = await this.apiService.get(url, {
+                    params: firstRequest ? {
+                        pagination_size: paginationSize,
+                        booking_creationDate_from: mounth,
+                        booking_creationDate_to: today,
+                    } : {},
+                    timeout: 120000,
                 });
 
-                const data = response.data;
-
-                // console.log('Dados retornados pela requisição:', JSON.stringify(data, null, 2));
-
+                const ids = response.data.data.map(thread => thread.id);
                 const previousLength = this.listIdsMessaging.length;
-                this.listIdsMessaging = this.listIdsMessaging.concat(data.data);
+                this.listIdsMessaging.push(...ids);
 
-                console.log(
-                    `Quantidade de itens adicionados: ${this.listIdsMessaging.length - previousLength}.`
-                );
-                console.log(
-                    `Total atual de itens na lista: ${this.listIdsMessaging.length}.`
-                );
+                console.log(`Quantidade de itens adicionados: ${ids.length}.`);
+                console.log(`Total atual de itens na lista: ${this.listIdsMessaging.length}.`);
+                console.log(`Quantidade de IDs retornados na página ${pageCounter}: ${ids.length}`);
+                console.log(`IDs da página ${pageCounter}: ${JSON.stringify(ids)}`);
+                console.log(`Total acumulado de itens na lista: ${this.listIdsMessaging.length}`);
 
-                threadsById = data._links?.next || null;
+                url = response.data.links?.next || response.data._links?.next || null;
+                console.log(`Próximo URL: ${url}`);
                 firstRequest = false;
-            }
+                pageCounter++;
 
+            }
+            console.log('\n==> Lista final de IDs retornada:');
             console.log('Lista final de IDs retornada:', JSON.stringify(this.listIdsMessaging, null, 2));
             return this.listIdsMessaging;
-        } catch (e) {
-            console.error('Erro ao retornar lista de IDs messaging:', e);
+        } catch(e) {
+            console.error('Erro ao retornar lista de IDs messaging:', e.response?.data || e.message || e);
             return [];
         }
+
     }
 
     private async findListChannelsById(channelId: string) {

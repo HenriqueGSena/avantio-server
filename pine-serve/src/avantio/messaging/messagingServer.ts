@@ -44,7 +44,7 @@ export class MessagingService implements OnModuleInit {
                         booking_creationDate_from: mounth,
                         booking_creationDate_to: today,
                     } : {},
-                    timeout: 120000,
+                    timeout: 300000,
                 });
 
                 const ids = response.data.data.map(thread => thread.id);

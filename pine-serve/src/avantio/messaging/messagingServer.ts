@@ -38,6 +38,10 @@ export class MessagingService implements OnModuleInit {
             this.listIdsMessaging = [];
             console.log('Inicializando a aplicação com a lista vazia:', this.listIdsMessaging);
 
+            /**
+            * TODO: Analisar os parametros da requisição de thread;
+            */
+
             let pageCounter = 1;
 
             while (url) {
@@ -45,8 +49,8 @@ export class MessagingService implements OnModuleInit {
                 const response = await this.apiService.get(url, {
                     params: firstRequest ? {
                         pagination_size: paginationSize,
-                        booking_creationDate_from: startOfYear,
-                        booking_creationDate_to: today,
+                        booking_arrivalDate_from: startOfYear,
+                        booking_arrivalDate_to: today,
                     } : {},
                     timeout: 300000,
                 });
@@ -107,6 +111,12 @@ export class MessagingService implements OnModuleInit {
 
     public async searchMessageDetails(id: string): Promise<any> {
 
+        /**
+         * TODO1: Inserir while para percorrer a lista de mensagens de cada id;
+         * TODO2: Se caso o ID retorne a resposta vazia pular o identificador ou enviar para uma lista `failedIdsMessaging`
+         * TODO3: Se caso o ID retorne a resposta retornar dentro do do banco de dados sqlite (implementar banco em memoria para testes de requisição);
+         */
+
         const paginationSize = 50;
 
         try {
@@ -119,36 +129,39 @@ export class MessagingService implements OnModuleInit {
                 } : {},
             });
             const messages = response.data;
+            firstRequest = false;
 
-            let notificationCount = 0;
-            let messageCount = 0;
+            // let notificationCount = 0;
+            // let messageCount = 0;
+            const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
             const mappedData = await Promise.all(
                 messages.map(async (message: any) => {
-                    if (message.sender?.notifiedAt) {
-                        notificationCount++;
-                    }
+                    console.log(delay);
+                    await delay(2000);
+                    // if (message.sender?.notifiedAt) {
+                    //     notificationCount++;
+                    // }
 
-                    if (message.sentAt) {
-                        messageCount++;
-                    }
+                    // if (message.sentAt) {
+                    //     messageCount++;
+                    // }
                     const listChannel = await this.findListChannelsById(message.channel);
                     return {
                         channel: listChannel,
                         bookingId: message.metadata[0]?.bookingId,
-                        sender: {
-                            notifiedAt: message.sender?.notifiedAt,
-                        },
-                        sentAt: message.sentAt,
+                        // sender: {
+                        //     notifiedAt: message.sender?.notifiedAt,
+                        // },
+                        // sentAt: message.sentAt,
                         syncStatus: message.syncStatus,
                     }
                 })
             )
-            firstRequest = false;
             return {
                 mappedData,
-                notificationCount,
-                messageCount,
+                // notificationCount,
+                // messageCount,
             };
         } catch (e) {
             console.error('Error no retorno nos detalhes da mensagem:', e);

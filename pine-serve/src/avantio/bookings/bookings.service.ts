@@ -16,8 +16,8 @@ export class BookingsService implements OnModuleInit {
     }
 
     public async onModuleInit() {
-        this.confirmedBookingIds = await this.getConfirmedBookings();
-        const bookingDetails = await this.getBookingsDetailsId();
+        // this.confirmedBookingIds = await this.getConfirmedBookings();
+        // const bookingDetails = await this.getBookingsDetailsId();
     }
 
     // @Cron('0 */15 * * * *')

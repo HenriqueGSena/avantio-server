@@ -2,12 +2,14 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigServiceApi } from '../../config/config.server';
 import { createAxiosClient } from '../../config/config.factory';
 import { MessagingDetails } from '../enums/interfaces/messagingDetails';
+import { delay } from 'rxjs';
 
 @Injectable()
 export class MessagingService implements OnModuleInit {
 
     private readonly apiService;
     private listIdsMessaging: { id: string }[] = [];
+    private failedIdsMessaging: { id: string, error: string }[] = [];
     
 
     constructor(private readonly configService: ConfigServiceApi) {
@@ -15,19 +17,18 @@ export class MessagingService implements OnModuleInit {
     }
 
     public async onModuleInit() {
-        // this.listIdsMessaging = await this.getListThreadsMessages();
+        this.listIdsMessaging = await this.getListThreadsMessages();
 
-        // const messages = await this.processIdsFromListMessaging();
-        // console.log('Retorno do metodo', messages);
+        const messages = await this.processListMessagesById();
     }
 
     public async getListThreadsMessages(): Promise<{ id: string }[]> {
         try {
             const startOfYear = new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0];
-            const mounth = new Date("2024-12-01").toISOString().split('T')[0];
+            const mounth = new Date("2024-12-20").toISOString().split('T')[0];
             const today = new Date().toISOString().split('T')[0];
 
-            console.log('Um tres dias atrás:', mounth);
+            console.log('Um mes:', startOfYear);
             console.log('Data Atual:', today);
 
             let url: string | null = '/threads';
@@ -44,7 +45,7 @@ export class MessagingService implements OnModuleInit {
                 const response = await this.apiService.get(url, {
                     params: firstRequest ? {
                         pagination_size: paginationSize,
-                        booking_creationDate_from: mounth,
+                        booking_creationDate_from: startOfYear,
                         booking_creationDate_to: today,
                     } : {},
                     timeout: 300000,
@@ -60,11 +61,15 @@ export class MessagingService implements OnModuleInit {
                 console.log(`IDs da página ${pageCounter}: ${JSON.stringify(ids)}`);
                 console.log(`Total acumulado de itens na lista: ${this.listIdsMessaging.length}`);
 
-                url = response.data.links?.next || response.data._links?.next || null;
+                url = response.data.links?.next || response.data._links?.next;
                 console.log(`Próximo URL: ${url}`);
                 firstRequest = false;
                 pageCounter++;
 
+                if (url) {
+                    console.log('Pausando por 2 segundos antes da próxima requisição...');
+                    await delay(2000);
+                }
             }
             console.log('\n==> Lista final de IDs retornada:');
             console.log('Lista final de IDs retornada:', JSON.stringify(this.listIdsMessaging, null, 2));
@@ -76,7 +81,7 @@ export class MessagingService implements OnModuleInit {
 
     }
 
-    private async findListChannelsById(channelId: string) {
+    private async findListChannelsById(channelId: string): Promise< string | null > {
         try {
             const channelResponse = await this.apiService.get(`/threads/${channelId}/channels`);
             const channels = channelResponse.data.data;
@@ -84,132 +89,72 @@ export class MessagingService implements OnModuleInit {
             return channels;
         } catch (err) {
             console.error(`Error na busca dos canais de conversas com ID: ${channelId}:`, err);
-            return;
+            return null;
         }
     }
 
-    public async processIdsFromListMessaging(): Promise<MessagingDetails[]> {
-        
+    public async processListMessagesById(): Promise<void> {
+        for (const { id } of this.listIdsMessaging) {
+            try {
+                const details = this.searchMessageDetails(id);
+                console.log('Detalhes do retorno da requisição:', details);
+            } catch (e) {
+                console.error(`Error na busca dos detalhes do seguinte ID: ${id}`, e);
+                this.failedIdsMessaging.push({ id, error: e.message || e });
+            }
+        }
+    }
+
+    public async searchMessageDetails(id: string): Promise<any> {
+
         const paginationSize = 50;
 
         try {
-            const messagesDetails = await Promise.all(
-                this.listIdsMessaging.map(async (data) => {
-                    const idToUse = data.id === "674e512d5c9d37c5577d79a7" ? "674e512d5c9d37c5577d79a7" : data.id;
-                    const response = await this.apiService.get(`/threads/${idToUse}/messages`, {
-                        params: {
-                            pagination_size: paginationSize,
-                        },
-                        timeout: 300000,
-                    });
-                    const messageData = response.data;
+            let firstRequest = true;
 
-                    if (messageData) {
-                        return {
-                            threadId: messageData.id,
-                            booking_Id: messageData[0].metadata.bookingId,
-                        }
+            console.log(`Buscando detalhes para o ID ${id}`);
+            const response = await this.apiService.get(`/threads/${id}/messages`, {
+                params: firstRequest ?{
+                    pagination_size: paginationSize,
+                } : {},
+            });
+            const messages = response.data;
+
+            let notificationCount = 0;
+            let messageCount = 0;
+
+            const mappedData = await Promise.all(
+                messages.map(async (message: any) => {
+                    if (message.sender?.notifiedAt) {
+                        notificationCount++;
+                    }
+
+                    if (message.sentAt) {
+                        messageCount++;
+                    }
+                    const listChannel = await this.findListChannelsById(message.channel);
+                    return {
+                        channel: listChannel,
+                        bookingId: message.metadata[0]?.bookingId,
+                        sender: {
+                            notifiedAt: message.sender?.notifiedAt,
+                        },
+                        sentAt: message.sentAt,
+                        syncStatus: message.syncStatus,
                     }
                 })
-            );
-            return messagesDetails.filter((item): item is MessagingDetails => item !== null);
+            )
+            firstRequest = false;
+            return {
+                mappedData,
+                notificationCount,
+                messageCount,
+            };
         } catch (e) {
             console.error('Error no retorno nos detalhes da mensagem:', e);
-            return [];
+            throw e;
         }
     }
-
-    // public async getMessagingDetails(): Promise<MessagingDetails[]> {
-    //     const results: MessagingDetails[] = [];
-
-    //     for (const { id: threadId } of this.listIdsMessaging) {
-    //         console.log('IDs sendo usados:',this.listIdsMessaging);
-    //         try {
-    //             const messages = await this.getListMessaging(threadId);
-    //             if (messages.length > 0) {
-    //                 messages.sort((a, b) => new Date(a.sendAt).getTime() - new Date(b.sendAt).getTime());
-
-    //                 const { average, max, min } = this.calculateTimeStats(messages);
-    //                 const bookingId = this.getFirstBookingId(messages);
-    //                 console.log(`Retorno do bookingId ${bookingId}`);
-    //                 const channels = await this.findListChannelsById(threadId);
-    //                 console.log(`Retorno dos canais: ${channels}`);
-                    
-    //                 results.push({
-    //                     threadId: threadId,
-    //                     channel: channels,
-    //                     booking_Id: bookingId,
-    //                     notified_count: `${messages.filter((msg) => msg.notified).length}`,
-    //                     send_count: `${messages.filter((msg) => msg.sendAt).length}`,
-    //                     total_messages: `${messages.length}`,
-    //                     average_time: average,
-    //                     max_time: max,
-    //                     min_time: min,
-    //                     source: messages[0].source || '',
-    //                     sync_status: messages[0].syncStatus || '',
-    //                     created_at: new Date(messages[0].createdAt),
-    //                 });
-    //             }
-    //         } catch (err) {
-    //             console.error(`Error no processamento da thread: ${threadId}`, err);
-    //             throw err;
-    //         }
-    //     }
-    //     console.log('Retorno dos campos', results);
-    //     return results;
-    // }
-
-    // private getFirstBookingId(messages: any[]): string | null {
-    //     for (const message of messages) {
-    //         if (message.metadata?.bookingId) {
-    //             return message.metadata.bookingId;
-    //         }
-    //     }
-    //     return null;
-    // }
-
-    // private async getListMessaging(id: string): Promise<any[]> {
-    //     const paginationSize = 30;
-    //     let firstRequest = true;
-    //     let IdThread: string | null = `/threads/${id}/messages`;
-    //     const allMessages = [];
-
-    //     try {
-    //         while (IdThread) {
-    //             const response = await this.apiService.get(IdThread, {
-    //                 params: firstRequest ? { pagination_size: paginationSize }: {},
-    //             });
-    //             const data = response.data;
-
-    //             allMessages.push(...data.data);
-    //             IdThread = data._links?.next || null;
-    //             firstRequest = false;
-    //         }
-    //     } catch (e) {
-    //         console.error(`Error ao buscar mensagens para ${IdThread}:`, e);
-    //         throw Error(e);
-    //     }
-
-    //     return allMessages;
-    // }
-
-    // private calculateTimeStats(messages: any[]): { average: number; max: number; min: number } {
-    //     const times: number[] = [];
-
-    //     for (let i = 1; i < messages.length; i++) {
-    //         const prevSendAt = new Date(messages[i - 1].sendAt).getTime();
-    //         const currSendAt = new Date(messages[i].sendAt).getTime();
-    //         const interval = (currSendAt - prevSendAt) / 1000;
-    //         times.push(interval);
-    //     }
-    //     const total = times.reduce((acc, time) => acc + time, 0);
-
-    //     return {
-    //         average: times.length > 0 ? total / times.length : 0,
-    //         max: times.length > 0 ? Math.max(...times) : 0,
-    //         min: times.length > 0 ? Math.min(...times) : 0,
-    //     };
-    // }
 
 }
 

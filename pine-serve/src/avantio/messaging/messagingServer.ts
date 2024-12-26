@@ -20,6 +20,7 @@ export class MessagingService implements OnModuleInit {
         this.listIdsMessaging = await this.getListThreadsMessages();
 
         // const messages = await this.processListMessagesById();
+        // console.log('Mensagens processadas:', messages);
     }
 
     public async getListThreadsMessages(): Promise<{ id: string }[]> {
@@ -34,23 +35,22 @@ export class MessagingService implements OnModuleInit {
             let url: string | null = '/threads';
             let firstRequest = true;
             const paginationSize = 50;
+            const maxIds = 15200;
+            let totalIdsCollected = 0;
 
             this.listIdsMessaging = [];
             console.log('Inicializando a aplicação com a lista vazia:', this.listIdsMessaging);
 
-            /**
-            * TODO: Analisar os parametros da requisição de thread;
-            */
-
             let pageCounter = 1;
 
-            while (url) {
+            while (url && totalIdsCollected < maxIds) {
                 console.log(`\nRequisição para o endpoint: ${url}`);
+                const startRequestTime = Date.now();
                 const response = await this.apiService.get(url, {
                     params: firstRequest ? {
                         pagination_size: paginationSize,
-                        booking_arrivalDate_from: startOfYear,
-                        booking_arrivalDate_to: today,
+                        booking_creationDate_from: startOfYear,
+                        booking_creationDate_to: today,
                     } : {},
                     timeout: 300000,
                 });
@@ -58,12 +58,23 @@ export class MessagingService implements OnModuleInit {
                 const ids = response.data.data.map(thread => thread.id);
                 const previousLength = this.listIdsMessaging.length;
                 this.listIdsMessaging.push(...ids);
+                totalIdsCollected += ids.length;
+
+                const endRequestTime = Date.now();
+                const requestDuration = endRequestTime - startRequestTime;
+                console.log(`Tempo de resposta para a página ${pageCounter}: ${requestDuration} ms`);
+
 
                 console.log(`Quantidade de itens adicionados: ${ids.length}.`);
                 console.log(`Total atual de itens na lista: ${this.listIdsMessaging.length}.`);
                 console.log(`Quantidade de IDs retornados na página ${pageCounter}: ${ids.length}`);
                 console.log(`IDs da página ${pageCounter}: ${JSON.stringify(ids)}`);
                 console.log(`Total acumulado de itens na lista: ${this.listIdsMessaging.length}`);
+
+                if (totalIdsCollected >= maxIds) {
+                    console.log(`Limite de ${maxIds} IDs atingido. Interrompendo a execução.`);
+                    break;
+                }
 
                 url = response.data.links?.next || response.data._links?.next;
                 console.log(`Próximo URL: ${url}`);
@@ -116,14 +127,14 @@ export class MessagingService implements OnModuleInit {
          * TODO2: Se caso o ID retorne a resposta vazia pular o identificador ou enviar para uma lista `failedIdsMessaging`
          * TODO3: Se caso o ID retorne a resposta retornar dentro do do banco de dados sqlite (implementar banco em memoria para testes de requisição);
          */
-
         const paginationSize = 50;
 
         try {
+            let listMessage: string | null = `/threads/${id}/messages`;
             let firstRequest = true;
 
             console.log(`Buscando detalhes para o ID ${id}`);
-            const response = await this.apiService.get(`/threads/${id}/messages`, {
+            const response = await this.apiService.get(listMessage, {
                 params: firstRequest ?{
                     pagination_size: paginationSize,
                 } : {},

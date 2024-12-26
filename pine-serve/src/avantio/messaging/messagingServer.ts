@@ -2,7 +2,10 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigServiceApi } from '../../config/config.server';
 import { createAxiosClient } from '../../config/config.factory';
 import { MessagingDetails } from '../enums/interfaces/messagingDetails';
+import { BodyMessage, ApiResponse } from '../enums/interfaces/requestMessages';
 import { delay } from 'rxjs';
+import { url } from 'inspector';
+import { response } from 'express';
 
 @Injectable()
 export class MessagingService implements OnModuleInit {
@@ -19,8 +22,8 @@ export class MessagingService implements OnModuleInit {
     public async onModuleInit() {
         this.listIdsMessaging = await this.getListThreadsMessages();
 
-        // const messages = await this.processListMessagesById();
-        // console.log('Mensagens processadas:', messages);
+        const messages = await this.processListMessagesById();
+        console.log('Mensagens processadas:', messages);
     }
 
     public async getListThreadsMessages(): Promise<{ id: string }[]> {
@@ -108,77 +111,120 @@ export class MessagingService implements OnModuleInit {
         }
     }
 
-    public async processListMessagesById(): Promise<void> {
-        for (const { id } of this.listIdsMessaging) {
-            try {
-                const details = this.searchMessageDetails(id);
-                console.log('Detalhes do retorno da requisição:', details);
-            } catch (e) {
-                console.error(`Error na busca dos detalhes do seguinte ID: ${id}`, e);
-                this.failedIdsMessaging.push({ id, error: e.message || e });
-            }
-        }
-    }
-
-    public async searchMessageDetails(id: string): Promise<any> {
-
-        /**
-         * TODO1: Inserir while para percorrer a lista de mensagens de cada id;
-         * TODO2: Se caso o ID retorne a resposta vazia pular o identificador ou enviar para uma lista `failedIdsMessaging`
-         * TODO3: Se caso o ID retorne a resposta retornar dentro do do banco de dados sqlite (implementar banco em memoria para testes de requisição);
-         */
-        const paginationSize = 50;
-
+    public async processListMessagesById() {
         try {
-            let listMessage: string | null = `/threads/${id}/messages`;
+            const messageIds = await this.listIdsMessaging;
+            console.log('Total de IDs por messages:', messageIds.length);
+
+            if (!messageIds.length) {
+                console.log('No message IDs found. Skipping processing details.');
+                return;
+            }
+
+            let url: string | null = `/threads/${messageIds}/messages`;
             let firstRequest = true;
+            const paginationSize = 50;
 
-            console.log(`Buscando detalhes para o ID ${id}`);
-            const response = await this.apiService.get(listMessage, {
-                params: firstRequest ?{
-                    pagination_size: paginationSize,
-                } : {},
-            });
-            const messages = response.data;
-            firstRequest = false;
+            while (url) {
+                const response = await this.apiService.get(url, {
+                    params: firstRequest ? {
+                        pagination_size: paginationSize,
+                    } : {},
+                    timeout: 300000,
+                });
+                const data = response.data;
 
-            // let notificationCount = 0;
-            // let messageCount = 0;
-            const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+                console.log('--- Message Details ---');
+                // Access and log message details here
+                data.data.forEach(message => {
+                    console.log(`Message ID: ${message.id}`);
+                    console.log(`Content: ${message.content}`);
+                    console.log(`Sender: ${message.sender.name}`);
+                    console.log(`Sent at: ${message.sentAt}`);
+                    // Log other relevant message details as needed
+                });
 
-            const mappedData = await Promise.all(
-                messages.map(async (message: any) => {
-                    console.log(delay);
-                    await delay(2000);
-                    // if (message.sender?.notifiedAt) {
-                    //     notificationCount++;
-                    // }
-
-                    // if (message.sentAt) {
-                    //     messageCount++;
-                    // }
-                    const listChannel = await this.findListChannelsById(message.channel);
-                    return {
-                        channel: listChannel,
-                        bookingId: message.metadata[0]?.bookingId,
-                        // sender: {
-                        //     notifiedAt: message.sender?.notifiedAt,
-                        // },
-                        // sentAt: message.sentAt,
-                        syncStatus: message.syncStatus,
-                    }
-                })
-            )
-            return {
-                mappedData,
-                // notificationCount,
-                // messageCount,
-            };
+                url = data._links.next || null;
+                firstRequest = false;
+            }
+            console.log('Finished processing message details.');
         } catch (e) {
-            console.error('Error no retorno nos detalhes da mensagem:', e);
+            console.error('Error no retorno dos detalhes da mensagem', e);
             throw e;
         }
     }
+
+    // public async processListMessagesById(): Promise<void> {
+    //     for (const { id } of this.listIdsMessaging) {
+    //         try {
+    //             const details = this.searchMessageDetails(id);
+    //             console.log('Detalhes do retorno da requisição:', details);
+    //         } catch (e) {
+    //             console.error(`Error na busca dos detalhes do seguinte ID: ${id}`, e);
+    //             this.failedIdsMessaging.push({ id, error: e.message || e });
+    //         }
+    //     }
+    // }
+
+    // public async searchMessageDetails(id: string): Promise<any> {
+
+    //     /**
+    //      * TODO1: Inserir while para percorrer a lista de mensagens de cada id;
+    //      * TODO2: Se caso o ID retorne a resposta vazia pular o identificador ou enviar para uma lista `failedIdsMessaging`
+    //      * TODO3: Se caso o ID retorne a resposta retornar dentro do do banco de dados sqlite (implementar banco em memoria para testes de requisição);
+    //      */
+    //     const paginationSize = 50;
+
+    //     try {
+    //         let listMessage: string | null = `/threads/${id}/messages`;
+    //         let firstRequest = true;
+
+    //         console.log(`Buscando detalhes para o ID ${id}`);
+    //         const response = await this.apiService.get(listMessage, {
+    //             params: firstRequest ?{
+    //                 pagination_size: paginationSize,
+    //             } : {},
+    //         });
+    //         const messages = response.data;
+    //         firstRequest = false;
+
+    //         // let notificationCount = 0;
+    //         // let messageCount = 0;
+    //         const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+    //         const mappedData = await Promise.all(
+    //             messages.map(async (message: any) => {
+    //                 console.log(delay);
+    //                 await delay(2000);
+    //                 // if (message.sender?.notifiedAt) {
+    //                 //     notificationCount++;
+    //                 // }
+
+    //                 // if (message.sentAt) {
+    //                 //     messageCount++;
+    //                 // }
+    //                 const listChannel = await this.findListChannelsById(message.channel);
+    //                 return {
+    //                     channel: listChannel,
+    //                     bookingId: message.metadata[0]?.bookingId,
+    //                     // sender: {
+    //                     //     notifiedAt: message.sender?.notifiedAt,
+    //                     // },
+    //                     // sentAt: message.sentAt,
+    //                     syncStatus: message.syncStatus,
+    //                 }
+    //             })
+    //         )
+    //         return {
+    //             mappedData,
+    //             // notificationCount,
+    //             // messageCount,
+    //         };
+    //     } catch (e) {
+    //         console.error('Error no retorno nos detalhes da mensagem:', e);
+    //         throw e;
+    //     }
+    // }
 
 }
 

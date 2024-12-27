@@ -129,7 +129,7 @@ export class MessagingService implements OnModuleInit {
                     const messages = data.data;
 
                     messages.forEach(message => {
-                        console.log(`Message ID: ${message.id}`);
+                        console.log(`Message ID: ${message.metadata.bookingId}`);
                         console.log(`Content: ${message.content}`);
                         console.log(`Sender: ${message.sender.name}`);
                         console.log(`Sent at: ${message.sentAt}`);

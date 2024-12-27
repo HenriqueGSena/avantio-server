@@ -4,8 +4,6 @@ import { createAxiosClient } from '../../config/config.factory';
 import { MessagingDetails } from '../enums/interfaces/messagingDetails';
 import { BodyMessage, ApiResponse } from '../enums/interfaces/requestMessages';
 import { delay } from 'rxjs';
-import { url } from 'inspector';
-import { response } from 'express';
 
 @Injectable()
 export class MessagingService implements OnModuleInit {
@@ -113,39 +111,38 @@ export class MessagingService implements OnModuleInit {
 
     public async processListMessagesById() {
         try {
-            const messageIds = await this.listIdsMessaging;
-            console.log('Total de IDs por messages:', messageIds.length);
+            for (const threadId of this.listIdsMessaging) {
+                console.log(`\nProcessando mensagens para o thread ID: ${threadId}`);
 
-            if (!messageIds.length) {
-                console.log('No message IDs found. Skipping processing details.');
-                return;
-            }
+                let url: string | null = `/threads/${threadId}/messages`;
+                let firstRequest = true;
+                const paginationSize = 50;
 
-            let url: string | null = `/threads/${messageIds}/messages`;
-            let firstRequest = true;
-            const paginationSize = 50;
+                while (url) {
+                    const response = await this.apiService.get(url, {
+                        params: firstRequest ? {
+                            pagination_size: paginationSize,
+                        } : {},
+                        timeout: 300000,
+                    });
+                    const data = response.data;
+                    const messages = data.data;
 
-            while (url) {
-                const response = await this.apiService.get(url, {
-                    params: firstRequest ? {
-                        pagination_size: paginationSize,
-                    } : {},
-                    timeout: 300000,
-                });
-                const data = response.data;
+                    messages.forEach(message => {
+                        console.log(`Message ID: ${message.id}`);
+                        console.log(`Content: ${message.content}`);
+                        console.log(`Sender: ${message.sender.name}`);
+                        console.log(`Sent at: ${message.sentAt}`);
+                    });
 
-                console.log('--- Message Details ---');
-                // Access and log message details here
-                data.data.forEach(message => {
-                    console.log(`Message ID: ${message.id}`);
-                    console.log(`Content: ${message.content}`);
-                    console.log(`Sender: ${message.sender.name}`);
-                    console.log(`Sent at: ${message.sentAt}`);
-                    // Log other relevant message details as needed
-                });
+                    url = data._links?.next || null;
+                    firstRequest = false;
 
-                url = data._links.next || null;
-                firstRequest = false;
+                    if (url) {
+                        console.log('Pausando por 2 segundos antes da próxima página...');
+                        await delay(2000);
+                    }
+                }
             }
             console.log('Finished processing message details.');
         } catch (e) {

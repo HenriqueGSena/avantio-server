@@ -1,8 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigServiceApi } from '../../config/config.server';
 import { createAxiosClient } from '../../config/config.factory';
-import { MessagingDetails } from '../enums/interfaces/messagingDetails';
-import { BodyMessage, ApiResponse } from '../enums/interfaces/requestMessages';
 import { delay } from 'rxjs';
 
 @Injectable()
@@ -10,8 +8,6 @@ export class MessagingService implements OnModuleInit {
 
     private readonly apiService;
     private listIdsMessaging: { id: string }[] = [];
-    private failedIdsMessaging: { id: string, error: string }[] = [];
-    
 
     constructor(private readonly configService: ConfigServiceApi) {
         this.apiService = createAxiosClient(this.configService);
@@ -27,7 +23,6 @@ export class MessagingService implements OnModuleInit {
     public async getListThreadsMessages(): Promise<{ id: string }[]> {
         try {
             const startOfYear = new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0];
-            const mounth = new Date("2024-12-20").toISOString().split('T')[0];
             const today = new Date().toISOString().split('T')[0];
 
             console.log('Um mes:', startOfYear);
@@ -65,7 +60,6 @@ export class MessagingService implements OnModuleInit {
                 const requestDuration = endRequestTime - startRequestTime;
                 console.log(`Tempo de resposta para a página ${pageCounter}: ${requestDuration} ms`);
 
-
                 console.log(`Quantidade de itens adicionados: ${ids.length}.`);
                 console.log(`Total atual de itens na lista: ${this.listIdsMessaging.length}.`);
                 console.log(`Quantidade de IDs retornados na página ${pageCounter}: ${ids.length}`);
@@ -94,7 +88,6 @@ export class MessagingService implements OnModuleInit {
             console.error('Erro ao retornar lista de IDs messaging:', e.response?.data || e.message || e);
             return [];
         }
-
     }
 
     private async findListChannelsById(channelId: string): Promise< string | null > {
@@ -129,7 +122,7 @@ export class MessagingService implements OnModuleInit {
                     const messages = data.data;
 
                     messages.forEach(message => {
-                        console.log(`Message ID: ${message.metadata.bookingId}`);
+                        console.log(`BookingId: ${message.metadata.bookingId}`);
                         console.log(`Content: ${message.content}`);
                         console.log(`Sender: ${message.sender.name}`);
                         console.log(`Sent at: ${message.sentAt}`);
@@ -138,10 +131,10 @@ export class MessagingService implements OnModuleInit {
                     url = data._links?.next || null;
                     firstRequest = false;
 
-                    if (url) {
-                        console.log('Pausando por 2 segundos antes da próxima página...');
-                        await delay(2000);
-                    }
+                    // if (url) {
+                    //     console.log('Pausando por 2 segundos antes da próxima página...');
+                    //     await delay(2000);
+                    // }
                 }
             }
             console.log('Finished processing message details.');
@@ -150,6 +143,6 @@ export class MessagingService implements OnModuleInit {
             throw e;
         }
     }
-    
+
 }
 

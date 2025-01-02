@@ -110,6 +110,8 @@ export class MessagingService implements OnModuleInit {
                 let url: string | null = `/threads/${threadId}/messages`;
                 let firstRequest = true;
                 const paginationSize = 50;
+                let bookingId: number | undefined;
+                const sentAtTimes: number[] = [];
 
                 while (url) {
                     const response = await this.apiService.get(url, {
@@ -121,20 +123,24 @@ export class MessagingService implements OnModuleInit {
                     const data = response.data;
                     const messages = data.data;
 
-                    messages.forEach(message => {
-                        console.log(`BookingId: ${message.metadata.bookingId}`);
-                        console.log(`Content: ${message.content}`);
-                        console.log(`Sender: ${message.sender.name}`);
-                        console.log(`Sent at: ${message.sentAt}`);
+                    if (messages.length > 0) {
+                        const bookingId = messages[0].metadata?.bookingId;
+                        console.log(`\nID do booking: ${bookingId}`);
+                    }
+
+                    messages.forEach((message) => {
+                        const sentAt = message.sentAt;
+                        if (sentAt) {
+                            const sentAtTimestamp = new Date(sentAt).getTime();
+                            sentAtTimes.push(sentAtTimestamp);
+                        }
                     });
 
                     url = data._links?.next || null;
                     firstRequest = false;
-
-                    // if (url) {
-                    //     console.log('Pausando por 2 segundos antes da próxima página...');
-                    //     await delay(2000);
-                    // }
+                }
+                if (sentAtTimes.length > 0) {
+                    this.calculateSentAtMetrics(bookingId, sentAtTimes);
                 }
             }
             console.log('Finished processing message details.');
@@ -142,6 +148,18 @@ export class MessagingService implements OnModuleInit {
             console.error('Error no retorno dos detalhes da mensagem', e);
             throw e;
         }
+    }
+
+    private calculateSentAtMetrics(bookingId: number | undefined, sentAtTimes: number[]) {
+        console.log(`\nCalculando métricas para Booking ID: ${bookingId}`);
+
+        const minTime = Math.min(...sentAtTimes);
+        const maxTime = Math.max(...sentAtTimes);
+        const averageTime = sentAtTimes.reduce((sum, time) => sum + time, 0) / sentAtTimes.length;
+
+        console.log(`Tempo mínimo absoluto (ms): ${minTime}`);
+        console.log(`Tempo máximo absoluto (ms): ${maxTime}`);
+        console.log(`Tempo médio absoluto (ms): ${averageTime}`);
     }
 
 }

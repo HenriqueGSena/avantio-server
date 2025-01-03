@@ -116,9 +116,7 @@ export class MessagingService implements OnModuleInit {
 
                 while (url) {
                     const response = await this.apiService.get(url, {
-                        params: firstRequest ? {
-                            pagination_size: paginationSize,
-                        } : {},
+                        params: firstRequest ? { pagination_size: paginationSize } : {},
                         timeout: 300000,
                     });
                     const data = response.data;

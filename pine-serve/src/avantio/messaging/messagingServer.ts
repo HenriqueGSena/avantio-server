@@ -44,11 +44,7 @@ export class MessagingService implements OnModuleInit {
                 console.log(`\nRequisição para o endpoint: ${url}`);
                 const startRequestTime = Date.now();
                 const response = await this.apiService.get(url, {
-                    params: firstRequest ? {
-                        pagination_size: paginationSize,
-                        booking_creationDate_from: startOfYear,
-                        booking_creationDate_to: today,
-                    } : {},
+                    params: firstRequest ? { pagination_size: paginationSize, booking_creationDate_from: startOfYear, booking_creationDate_to: today } : {},
                     timeout: 300000,
                 });
 
@@ -95,7 +91,6 @@ export class MessagingService implements OnModuleInit {
         try {
             const channelResponse = await this.apiService.get(`/threads/${channelId}/channels`);
             const channels = channelResponse.data.data;
-
             return channels;
         } catch (err) {
             console.error(`Error na busca dos canais de conversas com ID: ${channelId}:`, err);
@@ -106,8 +101,6 @@ export class MessagingService implements OnModuleInit {
     public async processListMessagesById() {
         try {
             for (const threadId of this.listIdsMessaging) {
-                
-
                 let url: string | null = `/threads/${threadId}/messages`;
                 let firstRequest = true;
                 const paginationSize = 50;

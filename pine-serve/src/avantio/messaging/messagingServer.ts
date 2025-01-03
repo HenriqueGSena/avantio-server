@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigServiceApi } from '../../config/config.server';
 import { createAxiosClient } from '../../config/config.factory';
+import { threadResult } from '../enums/interfaces/threadResult';
 import { delay } from 'rxjs';
 
 @Injectable()
@@ -31,7 +32,7 @@ export class MessagingService implements OnModuleInit {
             let url: string | null = '/threads';
             let firstRequest = true;
             const paginationSize = 50;
-            const maxIds = 15200;
+            const maxIds = 200;
             let totalIdsCollected = 0;
 
             this.listIdsMessaging = [];
@@ -105,7 +106,7 @@ export class MessagingService implements OnModuleInit {
     public async processListMessagesById() {
         try {
             for (const threadId of this.listIdsMessaging) {
-                console.log(`\nProcessando mensagens para o thread ID: ${threadId}`);
+                
 
                 let url: string | null = `/threads/${threadId}/messages`;
                 let firstRequest = true;
@@ -123,6 +124,7 @@ export class MessagingService implements OnModuleInit {
                     const data = response.data;
                     const messages = data.data;
 
+                    console.log(`\nRetornando o thread ID: ${threadId}`);
                     if (messages.length > 0) {
                         const bookingId = messages[0].metadata?.bookingId;
                         console.log(`\nID do booking: ${bookingId}`);
@@ -140,19 +142,16 @@ export class MessagingService implements OnModuleInit {
                     firstRequest = false;
                 }
                 if (sentAtTimes.length > 0) {
-                    this.calculateSentAtMetrics(bookingId, sentAtTimes);
+                    this.calculateSentAtMetrics(sentAtTimes);
                 }
             }
-            console.log('Finished processing message details.');
         } catch (e) {
             console.error('Error no retorno dos detalhes da mensagem', e);
             throw e;
         }
     }
 
-    private calculateSentAtMetrics(bookingId: number | undefined, sentAtTimes: number[]) {
-        console.log(`\nCalculando métricas para Booking ID: ${bookingId}`);
-
+    private calculateSentAtMetrics(sentAtTimes: number[]) {
         const minTime = Math.min(...sentAtTimes);
         const maxTime = Math.max(...sentAtTimes);
         const averageTime = sentAtTimes.reduce((sum, time) => sum + time, 0) / sentAtTimes.length;

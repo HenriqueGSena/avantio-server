@@ -101,10 +101,10 @@ export class MessagingService implements OnModuleInit {
     public async processListMessagesById() {
         try {
             for (const threadId of this.listIdsMessaging) {
+                console.log(`\nThreadId: ${threadId}`);
                 let url: string | null = `/threads/${threadId}/messages`;
                 let firstRequest = true;
                 const paginationSize = 50;
-                let bookingId: number | undefined;
                 const sentAtTimes: number[] = [];
 
                 while (url) {
@@ -115,10 +115,10 @@ export class MessagingService implements OnModuleInit {
                     const data = response.data;
                     const messages = data.data;
 
-                    console.log(`\nRetornando o thread ID: ${threadId}`);
+                    
                     if (messages.length > 0) {
                         const bookingId = messages[0].metadata?.bookingId;
-                        console.log(`\nID do booking: ${bookingId}`);
+                        console.log(`\nbookingId: ${bookingId}`);
                     }
 
                     messages.forEach((message) => {
@@ -147,9 +147,9 @@ export class MessagingService implements OnModuleInit {
         const maxTime = Math.max(...sentAtTimes);
         const averageTime = sentAtTimes.reduce((sum, time) => sum + time, 0) / sentAtTimes.length;
 
-        console.log(`Tempo mínimo absoluto (ms): ${minTime}`);
-        console.log(`Tempo máximo absoluto (ms): ${maxTime}`);
-        console.log(`Tempo médio absoluto (ms): ${averageTime}`);
+        console.log(`Time_min (ms): ${minTime}`);
+        console.log(`Time_max (ms): ${maxTime}`);
+        console.log(`Avg_time (ms): ${averageTime}`);
     }
 
 }

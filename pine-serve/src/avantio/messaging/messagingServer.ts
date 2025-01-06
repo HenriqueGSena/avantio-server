@@ -115,7 +115,6 @@ export class MessagingService implements OnModuleInit {
                     const data = response.data;
                     const messages = data.data;
 
-                    
                     if (messages.length > 0) {
                         const bookingId = messages[0].metadata?.bookingId;
                         console.log(`\nbookingId: ${bookingId}`);

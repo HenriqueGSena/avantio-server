@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigServiceApi } from '../../config/config.server';
 import { createAxiosClient } from '../../config/config.factory';
-import { threadResult } from '../enums/interfaces/threadResult';
+import { PrismaService } from 'src/db/prisma.service';
 import { delay } from 'rxjs';
 
 @Injectable()
@@ -32,7 +32,7 @@ export class MessagingService implements OnModuleInit {
             let url: string | null = '/threads';
             let firstRequest = true;
             const paginationSize = 50;
-            const maxIds = 200;
+            const maxIds = 50;
             let totalIdsCollected = 0;
 
             this.listIdsMessaging = [];
@@ -55,8 +55,8 @@ export class MessagingService implements OnModuleInit {
 
                 const endRequestTime = Date.now();
                 const requestDuration = endRequestTime - startRequestTime;
-                console.log(`Tempo de resposta para a página ${pageCounter}: ${requestDuration} ms`);
 
+                console.log(`Tempo de resposta para a página ${pageCounter}: ${requestDuration} ms`);
                 console.log(`Quantidade de itens adicionados: ${ids.length}.`);
                 console.log(`Total atual de itens na lista: ${this.listIdsMessaging.length}.`);
                 console.log(`Quantidade de IDs retornados na página ${pageCounter}: ${ids.length}`);
@@ -102,6 +102,7 @@ export class MessagingService implements OnModuleInit {
         try {
             for (const threadId of this.listIdsMessaging) {
                 console.log(`\nThreadId: ${threadId}`);
+                
                 let url: string | null = `/threads/${threadId}/messages`;
                 let firstRequest = true;
                 const paginationSize = 50;
@@ -110,7 +111,6 @@ export class MessagingService implements OnModuleInit {
                 while (url) {
                     const response = await this.apiService.get(url, {
                         params: firstRequest ? { pagination_size: paginationSize } : {},
-                        timeout: 300000,
                     });
                     const data = response.data;
                     const messages = data.data;
@@ -118,15 +118,15 @@ export class MessagingService implements OnModuleInit {
                     if (messages.length > 0) {
                         const bookingId = messages[0].metadata?.bookingId;
                         console.log(`\nbookingId: ${bookingId}`);
-                    }
 
-                    messages.forEach((message) => {
-                        const sentAt = message.sentAt;
-                        if (sentAt) {
-                            const sentAtTimestamp = new Date(sentAt).getTime();
-                            sentAtTimes.push(sentAtTimestamp);
-                        }
-                    });
+                        messages.forEach((message) => {
+                            const sentAt = message.sentAt;
+                            if (sentAt) {
+                                const sentAtTimestamp = new Date(sentAt).getTime();
+                                sentAtTimes.push(sentAtTimestamp);
+                            }
+                        });
+                    }
 
                     url = data._links?.next || null;
                     firstRequest = false;

@@ -16,15 +16,9 @@ datasource db {
 model messaging {
   id                 Int    @id @default(autoincrement())
   thread_id          String @unique
-  channel            String[]
-  booking_id         String @unique
-  notified_count     String                              // quantidade de notificações
-  send_count         String                              // quantidade de envios de menssagens
-  total_messages     String                              // Quantidade total de mensagens
+  booking_id         String[]                            // Lista bookingsIds
   average_time       Float                               // Tempo médio entre mensagens
   max_time           Float                               // Maior tempo entre mensagens
   min_time           Float                               // Menor tempo entre mensagens
-  source             String
-  sync_status        String
   created_at         DateTime @default(now())
 }

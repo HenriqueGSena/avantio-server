@@ -1,0 +1,35 @@
+.btn::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    transform: translateX(-100%);
+    transition: all 0.3s;
+    z-index: -1;
+}
+
+.btn:hover::before {
+    transform: translateX(0);
+}
+
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #ffcb00;
+    border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #878587;
+}
+
+::-webkit-scrollbar-track {
+    background: #ffffff;
+    border-radius: 0px;
+    box-shadow: inset 0px 0px 0px 0px #f0f0f0;
+}

@@ -1,18 +1,10 @@
-import { defineComponent ,ref } from "vue";
+import { Options, Vue } from "vue-class-component";
 
-export default defineComponent({
-    name: "MobileMenu",
-    setup() {
-        const isMenuOpen = ref(false);
+export default class dash extends Vue {
+    isMenuOpen = false;
 
-        const toggleMenu = () => {
-            isMenuOpen.value = !isMenuOpen.value;
-        };
-
-        return {
-            isMenuOpen,
-            toggleMenu,
-        };
-    },
-});
+    toggleMenu() {
+        this.isMenuOpen = !this.isMenuOpen;
+    }
+};
 

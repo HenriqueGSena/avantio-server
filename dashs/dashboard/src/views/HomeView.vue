@@ -3,13 +3,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { Vue, Options } from 'vue-class-component';
 import Dashboard from '../components/dash/dash.vue';
 
-export default defineComponent({
-  name: "HomeView",
+@Options({
   components: {
     Dashboard,
-  },
-});
+  }
+})
+export default class HomeView extends Vue {}
+
 </script>

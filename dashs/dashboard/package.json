@@ -10,9 +10,10 @@
   "dependencies": {
     "axios": "^1.7.9",
     "chart.js": "^4.4.7",
+    "tslib": "^2.8.1",
     "vue": "^3.2.13",
     "vue-chartjs": "^5.3.2",
-    "vue-class-component": "^8.0.0-rc.1",
+    "vue-class-component": "^8.0.0-0",
     "vue-i18n": "^10.0.5",
     "vue-router": "^4.0.3"
   },

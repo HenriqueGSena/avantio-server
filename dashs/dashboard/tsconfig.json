@@ -11,6 +11,9 @@
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": true,
+    "experimentalDecorators": true,
+    "target": "es6",
+    "module": "esnext",
     "sourceMap": true,
     "baseUrl": ".",
     "types": [

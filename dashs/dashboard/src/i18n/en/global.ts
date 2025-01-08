@@ -1,12 +1,13 @@
 export const translations = {
     en: {
-        dashboard: {
+        dash: {
             title: 'Dashboard'
         }
     },
     pt: {
-        dashboard: {
-            sign_out: 'Sair'
+        dash: {
+            sign_out: 'Sair',
+            calls: 'Atendimentos'
         }
     }
 }

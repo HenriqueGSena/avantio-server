@@ -1,6 +1,12 @@
 import { Options, Vue } from "vue-class-component";
+import Stats from "../cards/stats/Stats.vue";
 
-export default class dash extends Vue {
+@Options({
+    components: {
+        Stats,
+    }
+})
+export default class Dashboard extends Vue {
     isMenuOpen = false;
 
     toggleMenu() {

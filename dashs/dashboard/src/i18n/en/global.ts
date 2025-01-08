@@ -6,7 +6,7 @@ export const translations = {
     },
     pt: {
         dashboard: {
-            title: 'Painel'
+            sign_out: 'Sair'
         }
     }
 }

@@ -1,6 +1,18 @@
-import { defineComponent } from "vue";
+import { defineComponent ,ref } from "vue";
 
 export default defineComponent({
-    name: "Dashboard",
-})
+    name: "MobileMenu",
+    setup() {
+        const isMenuOpen = ref(false);
+
+        const toggleMenu = () => {
+            isMenuOpen.value = !isMenuOpen.value;
+        };
+
+        return {
+            isMenuOpen,
+            toggleMenu,
+        };
+    },
+});
 

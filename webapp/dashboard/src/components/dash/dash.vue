@@ -10,16 +10,16 @@
                             <img class="hidden h-16 w-auto lg:block" src="../../assets/logo_pine.png"
                                 alt="Dashboard web">
                         </div>
-                        <!-- <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
+                        <div class="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
                             <a href="#"
                                 class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-yellow-500 hover:text-gray-300">Dashboard</a>
-                            <a href="#"
+                            <!-- <a href="#"
                                 class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-yellow-500 hover:text-gray-300">Team</a>
                             <a href="#"
                                 class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-yellow-500 hover:text-gray-300">Projects</a>
                             <a href="#"
-                                class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-yellow-500 hover:text-gray-300">Calendar</a>
-                        </div> -->
+                                class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-300 hover:border-yellow-500 hover:text-gray-300">Calendar</a> -->
+                        </div>
                     </div>
                     <div class="hidden sm:ml-6 sm:flex sm:items-center">
                         <!-- Profile dropdown -->
@@ -96,12 +96,12 @@
         <div class="py-10">
             <header>
                 <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <h1 class="text-3xl font-bold tracking-tight text-gray-900"></h1>
+                    <Stats />
                 </div>
             </header>
             <main>
                 <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                    <Stats />
+                    <Board />
                 </div>
             </main>
         </div>

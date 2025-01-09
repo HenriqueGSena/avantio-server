@@ -1,9 +1,11 @@
 import { Options, Vue } from "vue-class-component";
 import Stats from "../cards/stats/Stats.vue";
+import Board from "../cards/board/board.component";
 
 @Options({
     components: {
         Stats,
+        Board,
     }
 })
 export default class Dashboard extends Vue {

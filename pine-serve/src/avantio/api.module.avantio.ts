@@ -3,8 +3,8 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigServiceApi } from '../config/config.server';
 import { BookingsController } from './bookings/bookings.controller';
 import { BookingsService } from './bookings/bookings.service';
-import { MessagingController } from './messaging/messagingController';
-import { MessagingService } from './messaging/messagingServer';
+import { MessagingController } from './messaging/messaging.controller';
+import { MessagingService } from './messaging/messaging.service';
 import { PrismaService } from 'src/db/prisma.service';
 
 @Module({
@@ -12,4 +12,4 @@ import { PrismaService } from 'src/db/prisma.service';
   controllers: [BookingsController, MessagingController],
   providers: [ConfigServiceApi, BookingsService, MessagingService],
 })
-export class ApiModuleAvantio {}
+export class ApiModuleAvantio { }

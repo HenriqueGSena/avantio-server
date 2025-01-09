@@ -13,7 +13,7 @@ export class MessagingService implements OnModuleInit {
     }
 
     public async onModuleInit() {
-        // this.listIdsMessaging = await this.getListThreadsMessages();
+        this.listIdsMessaging = await this.getListThreadsMessages();
 
         // const messages = await this.processListMessagesById();
         // console.log('Mensagens processadas:', messages);
@@ -29,7 +29,7 @@ export class MessagingService implements OnModuleInit {
 
             let url: string | null = '/threads';
             let firstRequest = true;
-            const paginationSize = 50;
+            const paginationSize = 100;
 
             while (url) {
                 const response = await this.apiService.get(url, {
@@ -38,15 +38,12 @@ export class MessagingService implements OnModuleInit {
                         booking_creationDate_from: startOfYear,
                         booking_creationDate_to: today
                     } : {},
-                    timeout: 300000,
                 });
 
-                console.log('Resposta da API:', JSON.stringify(response.data, null, 2));
+                const ids = response.data.data.map(thread => thread.id);
+                console.log(ids);
 
-                const data = response.data;
-                this.listIdsMessaging = this.listIdsMessaging.concat(data.data);
-
-                url = data._links.next || null;
+                url = response.data._links.next || null;
                 firstRequest = false;
             }
             console.log('\n==> Lista final de IDs retornada:');

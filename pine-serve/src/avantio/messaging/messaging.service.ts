@@ -13,7 +13,7 @@ export class MessagingService implements OnModuleInit {
     }
 
     public async onModuleInit() {
-        this.listIdsMessaging = await this.getListThreadsMessages();
+        // this.listIdsMessaging = await this.getListThreadsMessages();
 
         // const messages = await this.processListMessagesById();
         // console.log('Mensagens processadas:', messages);

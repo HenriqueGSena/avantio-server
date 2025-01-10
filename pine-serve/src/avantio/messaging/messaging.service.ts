@@ -24,8 +24,7 @@ export class MessagingService implements OnModuleInit {
             const startOfYear = new Date(new Date().getFullYear(), 0, 1).toISOString().split('T')[0];
             const today = new Date().toISOString().split('T')[0];
 
-            console.log('Um mes:', startOfYear);
-            console.log('Data Atual:', today);
+            console.log(`Periodo de busca da thread messages: ${startOfYear} + ${today}`);
 
             let url: string | null = '/threads';
             let firstRequest = true;
@@ -44,6 +43,7 @@ export class MessagingService implements OnModuleInit {
                 console.log(ids);
 
                 url = response.data._links.next || null;
+                console.log(url);
                 firstRequest = false;
             }
             console.log('\n==> Lista final de IDs retornada:');

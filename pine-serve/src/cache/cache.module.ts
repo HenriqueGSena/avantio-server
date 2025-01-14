@@ -3,9 +3,8 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { CacheService } from './nestCache/cache.service';
 
 @Module({
-    imports: [
-        CacheModule.register(),
-    ],
+    imports: [CacheModule.register()],
     providers: [CacheService],
+    exports: [CacheService],
 })
 export class CacheConfigModule {}

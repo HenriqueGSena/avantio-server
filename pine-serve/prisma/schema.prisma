@@ -57,13 +57,11 @@ model cleaning {
   housekeepers_cleaning housekeepers_cleaning[]
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model func_pineapples {
   name  String? @db.VarChar(512)
   role  String? @db.VarChar(512)
   email String? @db.VarChar(512)
-
-  @@ignore
+  id    BigInt  @id @default(autoincrement())
 }
 
 model housekeepers {

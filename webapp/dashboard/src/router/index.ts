@@ -17,6 +17,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import("../views/HomeView.vue"),
     meta: {
       title: "Home",
+      requiresAuth: true,
     }
   },
 ];
@@ -24,6 +25,17 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+
+  if (to.meta.requiresAuth && !isAuthenticated) {
+    alert('Você precisa fazer login para acessar esta página.');
+    next('/home');
+  } else {
+    next();
+  }
 });
 
 export default router;

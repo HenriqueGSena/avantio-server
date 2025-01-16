@@ -39,7 +39,7 @@
                                     </span>
                                 </button>
                             </div>
-                            <div v-if="isMenuOpen"
+                            <div v-if="isMenuOpen" @click="logout"
                                 class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none"
                                 role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button"
                                 tabindex="-1">
@@ -81,7 +81,7 @@
                         class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-300 hover:border-yellow-500 hover:text-gray-300">Calendar</a>
                 </div> -->
                 <div class="relative ml-3">
-                    <div v-if="isMenuOpen"
+                    <div v-if="isMenuOpen" @click="logout"
                         class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none"
                         role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
                         <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1"

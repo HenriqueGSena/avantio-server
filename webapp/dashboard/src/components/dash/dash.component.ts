@@ -1,6 +1,6 @@
 import { Options, Vue } from "vue-class-component";
 import Stats from "../cards/stats/Stats.vue";
-import Board from "../cards/board/board.component";
+import Board from "../cards/board/board.vue";
 
 @Options({
     components: {

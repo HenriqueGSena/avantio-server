@@ -22,7 +22,7 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.PINE_SERVER }}" > ~/.ssh/id_ed25519
         chmod 600 ~/.ssh/id_ed25519
-        ssh-keyscan -H 167.172.106.156 >> ~/.ssh/known_hosts
+        ssh-keyscan -H 200.152.109.148 >> ~/.ssh/known_hosts
 
     # Etapa 3: Instalar o Docker Compose
     - name: Install Docker Compose
@@ -39,12 +39,12 @@ jobs:
     # Etapa 5: Enviar o arquivo da imagem para o servidor
     - name: Transfer Docker Image to Server
       run: |
-        scp -v avantio-backend.tar root@167.172.106.156:/tmp/avantio-backend.tar
+        scp -v avantio-backend.tar root@200.152.109.148:/tmp/avantio-backend.tar
     
     # Etapa 6: Fazer o deploy no servidor
     - name: Deploy Backend
       run: |
-        ssh root@167.172.106.156 << 'EOF'
+        ssh root@200.152.109.148 << 'EOF'
           docker load < /tmp/avantio-backend.tar
           docker-compose -f /path/to/docker-compose.yml up -d --no-deps avantio-app
           rm /tmp/avantio-backend.tar

@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ApiModule } from './avantio/api.module';
+import { ApiModuleAvantio } from './avantio/api.module.avantio';
+import { CacheConfigModule } from './cache/cache.module';
 
 @Module({
-  imports: [ApiModule]
+  imports: [ApiModuleAvantio, CacheConfigModule]
 })
 export class AppModule {}

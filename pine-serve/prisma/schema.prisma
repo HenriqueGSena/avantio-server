@@ -1,53 +1,93 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider     = "postgresql"
-  url          = env("POSTGRES_URL_DEV")
-  relationMode = "prisma"
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+model accommodation {
+  id_acc          String  @id @db.VarChar
+  status          String? @db.VarChar
+  nome_acomodacao String? @db.VarChar
+  tamanho         Int?
+  cama            String? @db.VarChar
+  qtde_quartos    Int?
+  qtde_banheiros  Float?
+  cod_pais        String? @db.VarChar
+  cidade          String? @db.VarChar
+  endereco        String? @db.VarChar
+  bairro          String? @db.VarChar
+  latitude        Float?
+  longitude       Float?
+  capacidade      Int?
+}
+
+model accommodation_price {
+  id         Int       @id @default(autoincrement())
+  name       String?   @unique @db.VarChar
+  price      Float?
+  tier       Int?
+  min_price  Float?
+  base_price Float?
+  created_at DateTime? @db.Timestamptz(6)
 }
 
 model bookings {
-  id                 String   @id @unique
-  localizer          String
-  status             String
-  booking_date       String
-  company_id         String?
-  accommodation_code String
-  arrival            DateTime
-  departure          DateTime
-  external_data      String[]
-  creation_date      DateTime @default(now())
-  updated_at         DateTime
+  id_booking         String  @id @db.VarChar
+  portal_reference   String? @db.VarChar
+  check_in_data      String? @db.VarChar
+  check_out_data     String? @db.VarChar
+  reservation_date   String? @db.VarChar
+  status             String? @db.VarChar
+  accommodation_code String? @db.VarChar
+  sale_channel       String? @db.VarChar
+  total_payment      Float?
+  net_payment        Float?
+  extra_value        Float?
+  extra_descrition   String? @db.VarChar
+  portal_comission   Float?
 }
 
-model users {
-  id            String   @id @unique
-  name          String
-  surnames      String
-  email         String
-  phone         String
-  creation_date DateTime
-  last_updated  DateTime
-  country       String
-  postal_code   String
-  phones        String[]
-  language      String
+model cleaning {
+  id                    Int                     @id @default(autoincrement())
+  name                  String                  @db.VarChar(512)
+  position              String?                 @db.VarChar(512)
+  housekeepers_cleaning housekeepers_cleaning[]
 }
 
-model accommodations {
-  id      String @id @unique
-  name    String
-  type    String
-  status  String
-  units   String
-  subType String
-  purpose String
+model func_pineapples {
+  name  String? @db.VarChar(512)
+  role  String? @db.VarChar(512)
+  email String? @db.VarChar(512)
+  id    BigInt  @id @default(autoincrement())
+}
+
+model housekeepers {
+  id                    Int                     @id @default(autoincrement())
+  name                  String?                 @db.VarChar(512)
+  position              String?                 @db.VarChar(512)
+  housekeepers_cleaning housekeepers_cleaning[]
+}
+
+model housekeepers_cleaning {
+  id             Int          @id @default(autoincrement())
+  housekeeper_id Int
+  cleaning_id    Int
+  created_at     DateTime?    @default(now()) @db.Timestamp(6)
+  cleaning       cleaning     @relation(fields: [cleaning_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_cleaning")
+  housekeepers   housekeepers @relation(fields: [housekeeper_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_housekeeper")
+}
+
+model huggy_chats_data {
+  chat_id          String  @id @db.VarChar
+  agent_id         String? @db.VarChar
+  tabulation_id    String? @db.VarChar
+  client_id        String? @db.VarChar
+  status_chat      String? @db.VarChar
+  creation_date    String? @db.VarChar
+  update_date      String? @db.VarChar
+  attended_at_date String? @db.VarChar
+  closed_date      String? @db.VarChar
 }

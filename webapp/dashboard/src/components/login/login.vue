@@ -65,25 +65,4 @@
     </div>
 </template>
 
-<!-- <script lang="ts" src="./login.component.ts"></script> -->
-
-<script>
-export default {
-    data() {
-        return {
-            username: '',
-            password: '',
-        };
-    },
-    methods: {
-        login() {
-            if (this.username === 'admin' && this.password === 'admin') {
-                localStorage.setItem('isAuthenticated', 'true');
-                this.$router.push('/home');
-            } else {
-                alert('Usuário ou senha inválidos.');
-            }
-        },
-    },
-};
-</script>
+<script lang="ts" src="./login.component.ts"></script>

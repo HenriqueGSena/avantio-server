@@ -123,15 +123,15 @@ export class MessagingService implements OnModuleInit {
     //     }
     // }
 
-    // private calculateSentAtMetrics(sentAtTimes: number[]) {
-    //     const minTime = Math.min(...sentAtTimes);
-    //     const maxTime = Math.max(...sentAtTimes);
-    //     const averageTime = sentAtTimes.reduce((sum, time) => sum + time, 0) / sentAtTimes.length;
+    private calculateSentAtMetrics(sentAtTimes: number[]) {
+        const minTime = Math.min(...sentAtTimes);
+        const maxTime = Math.max(...sentAtTimes);
+        const averageTime = sentAtTimes.reduce((sum, time) => sum + time, 0) / sentAtTimes.length;
 
-    //     console.log(`Time_min (ms): ${minTime}`);
-    //     console.log(`Time_max (ms): ${maxTime}`);
-    //     console.log(`Avg_time (ms): ${averageTime}`);
-    // }
+        console.log(`Time_min (ms): ${minTime}`);
+        console.log(`Time_max (ms): ${maxTime}`);
+        console.log(`Avg_time (ms): ${averageTime}`);
+    }
 
 }
 

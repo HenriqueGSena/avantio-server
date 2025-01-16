@@ -16,8 +16,8 @@ export class MessagingService implements OnModuleInit {
     }
 
     public async onModuleInit() {
-        const listIds = await this.getListThreadsMessages();
-        console.log(`Visualizando lista de ids: ${listIds}`);
+        // const listIds = await this.getListThreadsMessages();
+        // console.log(`Visualizando lista de ids: ${listIds}`);
 
         // const messages = await this.processListMessagesById();
         // console.log('Mensagens processadas:', messages);

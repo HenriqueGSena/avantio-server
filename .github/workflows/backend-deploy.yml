@@ -37,4 +37,4 @@ jobs:
     # Etapa 5: Envio da imagem para o repositorio Docker Hub
     - name: Push Docker Image
       run: |
-        docker-compose -f docker-compose.yml push
+        docker-compose -f pine-serve/docker-compose.yml push

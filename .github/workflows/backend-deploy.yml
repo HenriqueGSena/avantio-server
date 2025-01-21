@@ -31,15 +31,15 @@ jobs:
     # Etapa 4: Enviar o arquivo da imagem para o servidor
     - name: Transfer Docker Image to Server
       run: |
-        scp -v avantio-backend.tar root@200.152.109.148:/tmp/avantio-backend.tar
+        scp -P 2222 avantio-backend.tar root@200.152.109.148:/tmp/avantio-backend.tar
 
-    # Etapa 5: Fazer o deploy no servidor (sem SSH)
+    # Etapa 5: Fazer o deploy no servidor
     - name: Deploy Backend
       run: |
-        ssh root@200.152.109.148 << 'EOF'
-        docker load < /tmp/avantio-backend.tar
-        docker-compose -f /path/to/docker-compose.yml up -d --no-deps avantio-app
-        rm /tmp/avantio-backend.tar
+        ssh -p 2222 pineserver@200.152.109.148 << 'EOF'
+          docker load < /tmp/avantio-backend.tar
+          docker-compose -f /path/to/docker-compose.yml up -d --no-deps avantio-app
+          rm /tmp/avantio-backend.tar
         EOF
 
     # Etapa 6: Limpeza no ambiente local do runner

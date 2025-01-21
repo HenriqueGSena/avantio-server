@@ -72,7 +72,7 @@ $ docker compose up --build
 
 **Back-end:** NestJs, NodeJs, Typescript, Prisma
 
-**Database:** PostgreSQL
+**Database:** PostgreSQL, Redis
 
 **Infrastructure:** Docker, Digital Ocean
 

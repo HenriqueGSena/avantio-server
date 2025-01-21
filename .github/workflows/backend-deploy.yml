@@ -26,7 +26,7 @@ jobs:
     # Etapa 3: Construção de imagem Docker
     - name: Build Docker Image
       run: |
-        docker build -t ${{ secrets.DOCKER_USERNAME }}/pine-server:1.0.0
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/pine-server:1.0.0 .
 
     # Etapa 4: Envio da imagem para o repositorio Docker Hub
     - name: Push Docker Image

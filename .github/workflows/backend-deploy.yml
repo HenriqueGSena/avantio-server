@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    # Etapa 1: Checkout do código
-    - name: Checkout Code
+    # Etapa 1: Checkout do repositorio
+    - name: Checkout Repository
       uses: actions/checkout@v3
 
     # Etapa 2: Instalar o Docker Compose
@@ -30,11 +30,7 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     # Etapa 4: Construção de imagem Docker
-    - name: Build Docker Image
+    - name: Build and Push Docker Image
       run: |
         docker-compose -f pine-serve/docker-compose.yml build
-
-    # Etapa 5: Envio da imagem para o repositorio Docker Hub
-    - name: Push Docker Image
-      run: |
         docker-compose -f pine-serve/docker-compose.yml push

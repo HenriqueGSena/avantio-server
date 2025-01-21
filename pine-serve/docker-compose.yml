@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: pineapples-server-app
+    image: henriquesena/pine-server:1.0.0
     restart: always
     environment:
       - TZ=America/Sao_Paulo

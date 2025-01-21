@@ -28,12 +28,18 @@ jobs:
         docker-compose -f pine-serve/docker-compose.yml build
         docker save pineapples-server-app -o avantio-backend.tar
 
-    # Etapa 4: Enviar o arquivo da imagem para o servidor
+    # Etapa 4: Configurar o arquivo known_hosts
+    - name: Add Server to Known Hosts
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -p 2222 -H 200.152.109.148 >> ~/.ssh/known_hosts
+
+    # Etapa 5: Enviar o arquivo da imagem para o servidor
     - name: Transfer Docker Image to Server
       run: |
         scp -P 2222 avantio-backend.tar root@200.152.109.148:/tmp/avantio-backend.tar
 
-    # Etapa 5: Fazer o deploy no servidor
+    # Etapa 6: Fazer o deploy no servidor
     - name: Deploy Backend
       run: |
         ssh -p 2222 pineserver@200.152.109.148 << 'EOF'
@@ -42,6 +48,6 @@ jobs:
           rm /tmp/avantio-backend.tar
         EOF
 
-    # Etapa 6: Limpeza no ambiente local do runner
+    # Etapa 7: Limpeza no ambiente local do runner
     - name: Clean Up Local Artifacts
       run: rm avantio-backend.tar

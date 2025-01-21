@@ -16,32 +16,19 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    # Etapa 2: Instalar o Docker Compose
-    - name: Install Docker Compose
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y docker-compose
+    # Etapa 2: Login no Docker Hub
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # Etapa 3: Construir e salvar a imagem Docker usando o Docker Compose
-    - name: Build and Save Docker Image
+    # Etapa 3: Construção de imagem Docker
+    - name: Build Docker Image
       run: |
-        docker-compose -f pine-serve/docker-compose.yml build
-        docker save pineapples-server-app -o avantio-backend.tar
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/pine-server:1.0.0
 
-    # Etapa 4: Enviar o arquivo da imagem para o servidor
-    - name: Transfer Docker Image to Server
+    # Etapa 4: Envio da imagem para o repositorio Docker Hub
+    - name: Push Docker Image
       run: |
-        scp -P 2222 avantio-backend.tar root@200.152.109.148:/tmp/avantio-backend.tar
-
-    # Etapa 5: Fazer o deploy no servidor
-    - name: Deploy Backend
-      run: |
-        ssh -p 2222 pineserver@200.152.109.148 << 'EOF'
-          docker load < /tmp/avantio-backend.tar
-          docker-compose -f /path/to/docker-compose.yml up -d --no-deps avantio-app
-          rm /tmp/avantio-backend.tar
-        EOF
-
-    # Etapa 6: Limpeza no ambiente local do runner
-    - name: Clean Up Local Artifacts
-      run: rm avantio-backend.tar
+        docker push ${{ secrets.DOCKER_USERNAME }}/pine-server:1.0.0
